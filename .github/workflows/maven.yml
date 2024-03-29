@@ -19,6 +19,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        project: [ account-api ]
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
