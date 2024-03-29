@@ -56,8 +56,6 @@ jobs:
         source: "target/*.jar"
         target: "~/"
         rm: false
-        token: ${{ secrets.GITHUB_TOKEN }}
-        directory: ${{ matrix.project }}
 
     - name: execute shell script
       uses: appleboy/ssh-action@master
@@ -68,5 +66,5 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script_stop: true
         script: "./startup.sh"
-        directory: ${{ matrix.project }}
+        dire
 
