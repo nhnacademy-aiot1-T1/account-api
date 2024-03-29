@@ -32,7 +32,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      working-directory: /account-api
+      working-directory: /home/runner/work/api/account-api
       run: mvn -B package
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
