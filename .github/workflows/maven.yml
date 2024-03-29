@@ -32,7 +32,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      working-directory: ${{ matrix.project }}
+      working-directory: ./account-api
       run: mvn -X -B package
 
     - name: Check directory structure
