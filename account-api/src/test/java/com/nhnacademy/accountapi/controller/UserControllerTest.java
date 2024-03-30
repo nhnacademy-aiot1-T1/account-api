@@ -50,7 +50,7 @@ class UserControllerTest {
          .build();
      when(userService.findById(userResponse.getId())).thenReturn(userResponse);
 
-    mockMvc.perform(get("/auth/users").header("X-USER-ID", userResponse.getId()))
+    mockMvc.perform(get("/api/account/users").header("X-USER-ID", userResponse.getId()))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("user"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("활성"))
@@ -76,7 +76,7 @@ class UserControllerTest {
 
     String body = objectMapper.writeValueAsString(user);
 
-    mockMvc.perform(post("/auth/users").contentType(MediaType.APPLICATION_JSON).content(body))
+    mockMvc.perform(post("/api/account/users").contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("new"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("활성"))
@@ -103,7 +103,7 @@ class UserControllerTest {
 
     String body = objectMapper.writeValueAsString(user);
 
-    mockMvc.perform(put("/auth/users").contentType(MediaType.APPLICATION_JSON).content(body))
+    mockMvc.perform(put("/api/account/users").contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("modify"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("활성"))
@@ -117,7 +117,7 @@ class UserControllerTest {
     String userId = "user";
     Mockito.doNothing().when(userService).deleteUser(userId);
 
-    mockMvc.perform(delete("/auth/users").header("X-USER-ID", userId))
+    mockMvc.perform(delete("/api/account/users").header("X-USER-ID", userId))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().string("[user] deleted successfully !"));
   }
