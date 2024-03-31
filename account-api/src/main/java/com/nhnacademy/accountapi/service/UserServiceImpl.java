@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService {
   private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
   @Override
-  public UserResponse findById(String id) {
+  public UserResponse getUser(String id) {
     User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("id"));
     return UserResponse.builder()
         .id(user.getId())
@@ -62,6 +62,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void deleteUser(String userId) {
+    if (!userRepository.existsById(userId)) {
+      throw new UserNotFoundException(userId);
+    }
     userRepository.deleteById(userId);
   }
 }

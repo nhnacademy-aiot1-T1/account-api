@@ -24,7 +24,7 @@ public class UserController {
 
   @GetMapping
   public ResponseEntity<UserResponse> getUser(@RequestHeader("X-USER-ID") String userId) {
-    return ResponseEntity.ok(userService.findById(userId));
+    return ResponseEntity.ok(userService.getUser(userId));
   }
 
   @PostMapping
