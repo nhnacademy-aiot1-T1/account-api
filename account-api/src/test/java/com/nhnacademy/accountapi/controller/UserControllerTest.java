@@ -1,6 +1,7 @@
 package com.nhnacademy.accountapi.controller;
 
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -43,7 +44,7 @@ class UserControllerTest {
   @Test
   @DisplayName("유저 정보 조회")
   void getUser() throws Exception {
-     UserResponse userResponse = UserResponse.builder()
+     User userResponse = User.builder()
          .id("user")
          .status("활성")
          .role(Role.USER)
@@ -68,11 +69,7 @@ class UserControllerTest {
         .role(Role.USER)
         .build();
 
-    when(userService.createUser(user)).thenReturn(UserResponse.builder()
-            .id(user.getId())
-            .status(user.getStatus())
-            .role(user.getRole())
-        .build());
+    when(userService.createUser(any())).thenReturn(user);
 
     String body = objectMapper.writeValueAsString(user);
 
@@ -94,16 +91,11 @@ class UserControllerTest {
         .role(Role.USER)
         .build();
 
-    UserResponse userResponse = UserResponse.builder()
-        .id("modify")
-        .status("활성")
-        .role(Role.USER)
-        .build();
-    when(userService.updateUser(user)).thenReturn(userResponse);
+    when(userService.updateUser(any(),any())).thenReturn(user);
 
     String body = objectMapper.writeValueAsString(user);
 
-    mockMvc.perform(put("/api/account/users").contentType(MediaType.APPLICATION_JSON).content(body))
+    mockMvc.perform(put("/api/account/users").header("X-USER-ID", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("modify"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("활성"))

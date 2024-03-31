@@ -7,7 +7,8 @@ import static org.mockito.Mockito.verify;
 
 import com.nhnacademy.accountapi.domain.User;
 import com.nhnacademy.accountapi.domain.User.Role;
-import com.nhnacademy.accountapi.dto.UserResponse;
+import com.nhnacademy.accountapi.dto.UserModifyRequest;
+import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 import com.nhnacademy.accountapi.repository.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,9 +41,14 @@ class UserServiceTest {
         .role(Role.USER)
         .build();
 
-    Mockito.when(userRepository.save(user)).thenReturn(user);
+    Mockito.when(userRepository.save(any())).thenReturn(user);
 
-    UserResponse result = userService.createUser(user);
+    User result = userService.createUser(UserRegisterRequest.builder()
+            .id(user.getId())
+            .password(user.getPassword())
+            .status(user.getStatus())
+            .role(user.getRole())
+            .build());
 
     assertThat(result.getId()).isEqualTo(user.getId());
     assertThat(result.getStatus()).isEqualTo(user.getStatus());
@@ -61,7 +67,7 @@ class UserServiceTest {
 
     Mockito.when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
 
-    UserResponse result = userService.getUser(user.getId());
+    User result = userService.getUser(user.getId());
 
     assertThat(result.getId()).isEqualTo(user.getId());
     assertThat(result.getStatus()).isEqualTo(user.getStatus());
@@ -83,7 +89,11 @@ class UserServiceTest {
 
     user.setStatus("sleep");
     user.setRole(Role.ADMIN);
-    UserResponse result = userService.updateUser(user);
+    User result = userService.updateUser(user.getId(), UserModifyRequest.builder()
+            .password(user.getPassword())
+            .status(user.getPassword())
+            .role(user.getRole())
+        .build());
 
     assertThat(result.getId()).isEqualTo(user.getId());
     assertThat(result.getStatus()).isEqualTo(user.getStatus());
