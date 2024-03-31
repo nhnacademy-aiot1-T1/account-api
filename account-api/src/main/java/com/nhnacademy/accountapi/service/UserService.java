@@ -5,7 +5,7 @@ import com.nhnacademy.accountapi.dto.UserResponse;
 
 public interface UserService {
 
-  UserResponse findById(String id);
+  UserResponse getUser(String id);
 
   UserResponse createUser(User user);
 

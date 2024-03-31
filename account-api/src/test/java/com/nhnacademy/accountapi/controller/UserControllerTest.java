@@ -48,7 +48,7 @@ class UserControllerTest {
          .status("활성")
          .role(Role.USER)
          .build();
-     when(userService.findById(userResponse.getId())).thenReturn(userResponse);
+     when(userService.getUser(userResponse.getId())).thenReturn(userResponse);
 
     mockMvc.perform(get("/api/account/users").header("X-USER-ID", userResponse.getId()))
         .andExpect(MockMvcResultMatchers.status().isOk())
