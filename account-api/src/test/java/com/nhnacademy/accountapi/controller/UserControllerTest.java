@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.accountapi.domain.User;
-import com.nhnacademy.accountapi.domain.User.Role;
-import com.nhnacademy.accountapi.dto.UserResponse;
+import com.nhnacademy.accountapi.domain.User.UserRole;
+import com.nhnacademy.accountapi.domain.User.UserStatus;
 import com.nhnacademy.accountapi.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,16 +46,16 @@ class UserControllerTest {
   void getUser() throws Exception {
      User userResponse = User.builder()
          .id("user")
-         .status("활성")
-         .role(Role.USER)
+         .status(UserStatus.ACTIVE)
+         .role(UserRole.USER)
          .build();
      when(userService.getUser(userResponse.getId())).thenReturn(userResponse);
 
-    mockMvc.perform(get("/api/account/users").header("X-USER-ID", userResponse.getId()))
+    mockMvc.perform(get("/api/users/{id}", userResponse.getId()).header("X-USER-ID", userResponse.getId()))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("user"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("활성"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.role").value("USER"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("user"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value("USER"))
     ;
   }
 
@@ -65,19 +65,19 @@ class UserControllerTest {
     User user = User.builder()
         .id("new")
         .password("123")
-        .status("활성")
-        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .role(UserRole.USER)
         .build();
 
     when(userService.createUser(any())).thenReturn(user);
 
     String body = objectMapper.writeValueAsString(user);
 
-    mockMvc.perform(post("/api/account/users").contentType(MediaType.APPLICATION_JSON).content(body))
+    mockMvc.perform(post("/api/users/{id}", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("new"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("활성"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.role").value("USER"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("new"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value("USER"))
         ;
   }
 
@@ -87,19 +87,19 @@ class UserControllerTest {
     User user = User.builder()
         .id("modify")
         .password("123")
-        .status("활성")
-        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .role(UserRole.USER)
         .build();
 
     when(userService.updateUser(any(),any())).thenReturn(user);
 
     String body = objectMapper.writeValueAsString(user);
 
-    mockMvc.perform(put("/api/account/users").header("X-USER-ID", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
+    mockMvc.perform(put("/api/users/{id}", user.getId()).header("X-USER-ID", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("modify"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("활성"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.role").value("USER"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("modify"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value("USER"))
     ;
   }
 
@@ -109,8 +109,8 @@ class UserControllerTest {
     String userId = "user";
     Mockito.doNothing().when(userService).deleteUser(userId);
 
-    mockMvc.perform(delete("/api/account/users").header("X-USER-ID", userId))
+    mockMvc.perform(delete("/api/users/{id}", userId).header("X-USER-ID", userId))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().string("[user] deleted successfully !"));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("[user] deleted successfully !"));
   }
 }

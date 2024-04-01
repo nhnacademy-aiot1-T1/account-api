@@ -1,20 +1,21 @@
 package com.nhnacademy.accountapi.dto;
 
-import com.nhnacademy.accountapi.domain.User.Role;
+import com.nhnacademy.accountapi.domain.User.UserRole;
+import com.nhnacademy.accountapi.domain.User.UserStatus;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRegisterRequest {
   private String id;
   private String password;
-  private String status;
+  private UserStatus status;
   @Enumerated(EnumType.STRING)
-  private Role role;
+  private UserRole role;
 
 }

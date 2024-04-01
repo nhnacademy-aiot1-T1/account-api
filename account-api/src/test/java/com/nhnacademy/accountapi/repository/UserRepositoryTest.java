@@ -3,7 +3,8 @@ package com.nhnacademy.accountapi.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.nhnacademy.accountapi.domain.User;
-import com.nhnacademy.accountapi.domain.User.Role;
+import com.nhnacademy.accountapi.domain.User.UserRole;
+import com.nhnacademy.accountapi.domain.User.UserStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ class UserRepositoryTest {
     User user = User.builder()
         .id("t1")
         .password("111")
-        .status("활성")
-        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .role(UserRole.USER)
         .build();
 
     User result = userRepository.save(user);
@@ -39,8 +40,8 @@ class UserRepositoryTest {
     User user = User.builder()
         .id("t1")
         .password("222")
-        .status("삭제예정")
-        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .role(UserRole.USER)
         .build();
     userRepository.save(user);
     long beforeUserCount = userRepository.count();

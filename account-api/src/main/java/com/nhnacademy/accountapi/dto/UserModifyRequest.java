@@ -1,16 +1,20 @@
 package com.nhnacademy.accountapi.dto;
 
-import com.nhnacademy.accountapi.domain.User.Role;
-import lombok.Builder;
+import com.nhnacademy.accountapi.domain.User.UserRole;
+import com.nhnacademy.accountapi.domain.User.UserStatus;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
+/***
+ *
+ */
 @Getter
-@Setter
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserModifyRequest {
   private String password;
-  private String status;
-  private Role role;
+  private UserStatus status;
+  private UserRole role;
 
 }

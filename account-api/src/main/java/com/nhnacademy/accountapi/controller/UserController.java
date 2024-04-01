@@ -2,6 +2,8 @@
 package com.nhnacademy.accountapi.controller;
 
 import com.nhnacademy.accountapi.domain.User;
+import com.nhnacademy.accountapi.dto.LoginResponse;
+import com.nhnacademy.accountapi.dto.Response;
 import com.nhnacademy.accountapi.dto.UserModifyRequest;
 import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 import com.nhnacademy.accountapi.dto.UserResponse;
@@ -15,56 +17,51 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
+
   private final UserService userService;
 
-  @GetMapping("/login/{id}")
-  public User getAccount(@PathVariable String id) {
-    return userService.getUser(id);
+  @GetMapping("/{id}/login-info")
+  public ResponseEntity<Response<LoginResponse>> getAccount(@PathVariable String id) {
+    User user = userService.getUser(id);
+    LoginResponse data = new LoginResponse(user.getId(), user.getPassword());
+    return ResponseEntity.ok(Response.success(data, "user id, password info"));
   }
 
-  @GetMapping("/users")
-  public ResponseEntity<UserResponse> getUser(@RequestHeader("X-USER-ID") String userId) {
-    User result = userService.getUser(userId);
-    return ResponseEntity.ok(UserResponse.builder()
-        .id(result.getId())
-        .role(result.getRole())
-        .status(result.getStatus())
-        .build());
+  @GetMapping("/{id}")
+  public ResponseEntity<Response<UserResponse>> getUser(@PathVariable String id) {
+    User result = userService.getUser(id);
+    UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
+    return ResponseEntity.ok(Response.success(data, "User Info"));
   }
 
-  @PostMapping("/users")
-  public ResponseEntity<UserResponse> registerUser(@RequestBody UserRegisterRequest user) {
+  @PostMapping("/{id}")
+  public ResponseEntity<Response<UserResponse>> registerUser(
+      @RequestBody UserRegisterRequest user) {
     User result = userService.createUser(user);
-    return ResponseEntity.ok(UserResponse.builder()
-        .id(result.getId())
-        .role(result.getRole())
-        .status(result.getStatus())
-        .build());
+    UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
+    return ResponseEntity.ok(Response.success(data, user.getId() + " created"));
   }
 
-  @PutMapping("/users")
-  public ResponseEntity<UserResponse> modifyUser(@RequestHeader("X-USER-ID") String userId, @RequestBody UserModifyRequest user) {
-    User result = userService.updateUser(userId, user);
-    return ResponseEntity.ok(UserResponse.builder()
-        .id(result.getId())
-        .role(result.getRole())
-        .status(result.getStatus())
-        .build());
+  @PutMapping("/{id}")
+  public ResponseEntity<Response<UserResponse>> modifyUser(@PathVariable String id, @RequestBody UserModifyRequest user) {
+    User result = userService.updateUser(id, user);
+    UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
+
+    return ResponseEntity.ok(Response.success(data, id+"modified"));
   }
 
-  @DeleteMapping("/users")
-  public ResponseEntity<String> deleteUser(@RequestHeader("X-USER-ID") String userId) {
-    userService.deleteUser(userId);
-    return ResponseEntity.ok(String.format("[%s] deleted successfully !", userId));
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Response<String>> deleteUser(@PathVariable String id) {
+    userService.deleteUser(id);
+    return ResponseEntity.ok(Response.success(null, String.format("[%s] deleted successfully !", id)));
   }
 
 }

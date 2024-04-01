@@ -6,7 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.nhnacademy.accountapi.domain.User;
-import com.nhnacademy.accountapi.domain.User.Role;
+import com.nhnacademy.accountapi.domain.User.UserRole;
+import com.nhnacademy.accountapi.domain.User.UserStatus;
 import com.nhnacademy.accountapi.dto.UserModifyRequest;
 import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 import com.nhnacademy.accountapi.repository.UserRepository;
@@ -17,18 +18,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 class UserServiceTest {
+
   UserService userService;
 
   @MockBean
   UserRepository userRepository;
 
+  @MockBean
+  BCryptPasswordEncoder passwordEncoder;
+
   @BeforeEach
   void setUp() {
-    userService = new UserServiceImpl(userRepository);
+    userService = new UserServiceImpl(userRepository, passwordEncoder);
   }
 
   @Test
@@ -37,18 +43,19 @@ class UserServiceTest {
     User user = User.builder()
         .id("service user")
         .password("encoding pw")
-        .status("active")
-        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .role(UserRole.USER)
         .build();
 
     Mockito.when(userRepository.save(any())).thenReturn(user);
 
-    User result = userService.createUser(UserRegisterRequest.builder()
-            .id(user.getId())
-            .password(user.getPassword())
-            .status(user.getStatus())
-            .role(user.getRole())
-            .build());
+    User result = userService.createUser(new UserRegisterRequest(
+        user.getId(),
+        user.getPassword(),
+        user.getStatus(),
+        user.getRole()
+    ));
+
 
     assertThat(result.getId()).isEqualTo(user.getId());
     assertThat(result.getStatus()).isEqualTo(user.getStatus());
@@ -61,8 +68,8 @@ class UserServiceTest {
     User user = User.builder()
         .id("service user")
         .password("encoding pw")
-        .status("active")
-        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .role(UserRole.USER)
         .build();
 
     Mockito.when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
@@ -80,20 +87,22 @@ class UserServiceTest {
     User user = User.builder()
         .id("service user")
         .password("encoding pw")
-        .status("active")
-        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .role(UserRole.USER)
         .build();
 
     Mockito.when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
     Mockito.when(userRepository.save(any())).thenReturn(user);
 
-    user.setStatus("sleep");
-    user.setRole(Role.ADMIN);
-    User result = userService.updateUser(user.getId(), UserModifyRequest.builder()
-            .password(user.getPassword())
-            .status(user.getPassword())
-            .role(user.getRole())
-        .build());
+    user.setStatus(UserStatus.DEACTIVATE);
+    user.setRole(UserRole.ADMIN);
+    User result = userService.updateUser(
+        user.getId(),
+        new UserModifyRequest(
+            user.getPassword(),
+            user.getStatus(),
+            user.getRole())
+    );
 
     assertThat(result.getId()).isEqualTo(user.getId());
     assertThat(result.getStatus()).isEqualTo(user.getStatus());
@@ -106,8 +115,8 @@ class UserServiceTest {
     User user = User.builder()
         .id("service user")
         .password("encoding pw")
-        .status("active")
-        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .role(UserRole.USER)
         .build();
 
     Mockito.when(userRepository.existsById(any())).thenReturn(true);
