@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @Getter
 public class Response<T> {
-  private String status;
-  private T data;
-  private String message;
-  private LocalDateTime timestamp;
+  private final String status;
+  private final T data;
+  private final String message;
+  private final LocalDateTime timestamp;
 
   private Response(String status, T data, String message) {
     this.status = status;
@@ -19,6 +19,10 @@ public class Response<T> {
 
   public static <T> Response<T> success(T data, String message) {
     return new Response<>("success", data, message);
+  }
+
+  public static <T> Response<T> fail(T data, String message) {
+    return new Response<>("fail", data, message);
   }
 
 }

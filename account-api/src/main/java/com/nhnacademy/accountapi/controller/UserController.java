@@ -20,6 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/***
+ * User 정보와 관련하여 기능을 제공하는 Controller
+ *
+ *
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/users")

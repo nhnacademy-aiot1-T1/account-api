@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class UserResponse {
-  private String id;
-  private UserStatus status;
-  private UserRole role;
+  private final String id;
+  private final UserStatus status;
+  private final UserRole role;
 }
