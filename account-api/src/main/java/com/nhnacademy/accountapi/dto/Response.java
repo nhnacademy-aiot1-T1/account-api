@@ -3,6 +3,10 @@ package com.nhnacademy.accountapi.dto;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
+/***
+ * 기본 응답 포맷
+ * @param <T> - 전달될 응답 DTO 타입
+ */
 @Getter
 public class Response<T> {
   private final String status;

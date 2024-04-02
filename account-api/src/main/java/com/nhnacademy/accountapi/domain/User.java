@@ -13,6 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/***
+ * DB에서 관리되는 User Entity
+ */
 @Entity
 @Table(name = "user")
 @Getter

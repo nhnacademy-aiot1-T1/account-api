@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/***
+ * User를 등록할 때 사용되는 DTO
+ */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
