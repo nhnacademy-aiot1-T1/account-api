@@ -1,7 +1,8 @@
 package com.nhnacademy.accountapi.service;
 
 import com.nhnacademy.accountapi.domain.User;
-import com.nhnacademy.accountapi.dto.UserResponse;
+import com.nhnacademy.accountapi.dto.UserModifyRequest;
+import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 import com.nhnacademy.accountapi.exception.UserNotFoundException;
 import com.nhnacademy.accountapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,33 +14,29 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
-  private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+  private final BCryptPasswordEncoder passwordEncoder;
 
   @Override
-  public UserResponse getUser(String id) {
-    User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("id"));
-    return UserResponse.builder()
-        .id(user.getId())
-        .role(user.getRole())
-        .status(user.getStatus())
-        .build();
+  public User getUser(String id) {
+    return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("id"));
   }
 
   @Override
-  public UserResponse createUser(User user) {
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    User result = userRepository.save(user);
-    return UserResponse.builder()
-        .id(result.getId())
-        .role(result.getRole())
-        .status(result.getStatus())
+  public User createUser(UserRegisterRequest userRegisterRequest) {
+    User user = User.builder()
+        .id(userRegisterRequest.getId())
+        .password(passwordEncoder.encode(userRegisterRequest.getPassword()))
+        .status(userRegisterRequest.getStatus())
+        .role(userRegisterRequest.getRole())
         .build();
+
+    return userRepository.save(user);
   }
 
   @Override
-  public UserResponse updateUser(User user) {
-    User target = userRepository.findById(user.getId())
-        .orElseThrow(() -> new UserNotFoundException(user.getId()));
+  public User updateUser(String userId, UserModifyRequest user) {
+    User target = userRepository.findById(userId)
+        .orElseThrow(() -> new UserNotFoundException(userId));
 
     if (user.getPassword() != null) {
       target.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -51,13 +48,8 @@ public class UserServiceImpl implements UserService {
       target.setRole(target.getRole());
     }
 
-    target = userRepository.save(target);
 
-    return UserResponse.builder()
-        .id(target.getId())
-        .status(target.getStatus())
-        .role(target.getRole())
-        .build();
+    return userRepository.save(target);
   }
 
   @Override

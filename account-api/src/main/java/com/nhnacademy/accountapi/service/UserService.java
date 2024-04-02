@@ -1,15 +1,16 @@
 package com.nhnacademy.accountapi.service;
 
 import com.nhnacademy.accountapi.domain.User;
-import com.nhnacademy.accountapi.dto.UserResponse;
+import com.nhnacademy.accountapi.dto.UserModifyRequest;
+import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 
 public interface UserService {
 
-  UserResponse getUser(String id);
+  User getUser(String id);
 
-  UserResponse createUser(User user);
+  User createUser(UserRegisterRequest userRegisterRequest);
 
-  UserResponse updateUser(User user);
+  User updateUser(String userId, UserModifyRequest user);
 
   void deleteUser(String userId);
 }

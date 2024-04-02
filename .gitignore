@@ -133,9 +133,12 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+.iml
 
 ### Sonar ###
 #Sonar generated dir
 /.sonar/
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,sonar,maven,java
+**/.idea/
+application-db.properties

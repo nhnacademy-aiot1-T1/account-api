@@ -1,0 +1,10 @@
+### 유저 등록
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+    "id": "id",
+    "password": "pw",
+    "status": "active",
+    "role": "USER"
+}

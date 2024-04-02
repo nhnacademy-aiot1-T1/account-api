@@ -1,6 +1,11 @@
+
 package com.nhnacademy.accountapi.controller;
 
 import com.nhnacademy.accountapi.domain.User;
+import com.nhnacademy.accountapi.dto.LoginResponse;
+import com.nhnacademy.accountapi.dto.Response;
+import com.nhnacademy.accountapi.dto.UserModifyRequest;
+import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 import com.nhnacademy.accountapi.dto.UserResponse;
 import com.nhnacademy.accountapi.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -8,39 +13,81 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/***
+ * User 정보와 관련하여 기능을 제공하는 Controller
+ */
 @Slf4j
 @RestController
-@RequestMapping("/api/account/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
+
   private final UserService userService;
 
-  @GetMapping
-  public ResponseEntity<UserResponse> getUser(@RequestHeader("X-USER-ID") String userId) {
-    return ResponseEntity.ok(userService.getUser(userId));
+  /***
+   * auth server에서 id, password를 체크하기 위해 받는 정보
+   * @param id - 로그인정보를 확인할 user id
+   * @return id, password 를 담은 DTO
+   */
+  @GetMapping("/{id}/login-info")
+  public ResponseEntity<Response<LoginResponse>> getAccount(@PathVariable String id) {
+    User user = userService.getUser(id);
+    LoginResponse data = new LoginResponse(user.getId(), user.getPassword());
+    return ResponseEntity.ok(Response.success(data, "user id, password info"));
   }
+
+
+  /***
+   * DB에 저장된 특정 유저 정보를 조회하는 메서드
+   * @param id - 조회할 유저 ID
+   * @return 유저의 id, status, role 을 담은 DTO
+   */
+  @GetMapping("/{id}")
+  public ResponseEntity<Response<UserResponse>> getUser(@PathVariable String id) {
+    User result = userService.getUser(id);
+    UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
+    return ResponseEntity.ok(Response.success(data, "User Info"));
+  }
+
 
   @PostMapping
-  public ResponseEntity<UserResponse> registerUser(@RequestBody User user) {
-    return ResponseEntity.ok(userService.createUser(user));
+  public ResponseEntity<Response<UserResponse>> registerUser(
+      @RequestBody UserRegisterRequest user) {
+    User result = userService.createUser(user);
+    UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
+    return ResponseEntity.ok(Response.success(data, user.getId() + " created"));
   }
 
-  @PutMapping
-  public ResponseEntity<UserResponse> modifyUser(@RequestBody User user) {
-    return ResponseEntity.ok(userService.updateUser(user));
+  /***
+   * DB에 저장된 특정 유저의 정보를 수정하는 메서드
+   * @param id - 수정할 유저 ID
+   * @param user - 수정된 정보를 담은 DTO (password, status, role)
+   * @return 수정된 User 정보 (id, status, role)
+   */
+  @PutMapping("/{id}")
+  public ResponseEntity<Response<UserResponse>> modifyUser(@PathVariable String id, @RequestBody UserModifyRequest user) {
+    User result = userService.updateUser(id, user);
+    UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
+
+    return ResponseEntity.ok(Response.success(data, id+"modified"));
   }
 
-  @DeleteMapping
-  public ResponseEntity<String> deleteUser(@RequestHeader("X-USER-ID") String userId) {
-    userService.deleteUser(userId);
-    return ResponseEntity.ok(String.format("[%s] deleted successfully !", userId));
+  /***
+   * DB에 저장된 특정 유저의 정보를 삭제하는 메서드
+   * @param id - 삭제할 유저 ID
+   * @return 단순 성공 메세지 반환
+   */
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Response<String>> deleteUser(@PathVariable String id) {
+    userService.deleteUser(id);
+    return ResponseEntity.ok(Response.success(null, String.format("[%s] deleted successfully !", id)));
   }
 
 }
