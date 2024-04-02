@@ -140,6 +140,5 @@ buildNumber.properties
 /.sonar/
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,sonar,maven,java
-*.iml
 **/.idea/
 application-db.properties
