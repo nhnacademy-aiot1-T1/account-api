@@ -16,7 +16,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   public ResponseEntity<Response<String>> handleCustomException(Exception e) {
     Response<String> error = Response.fail(null, e.getMessage());
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
 
 }
