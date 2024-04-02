@@ -32,11 +32,11 @@ public class UserController {
   private final UserService userService;
 
   /***
-   * auth server에서 id, password를 체크하기 위해 받는 정보
+   * auth server에서 id, password를 체크하기 위해 보내는 유저 정보
    * @param id - 로그인정보를 확인할 user id
    * @return id, password 를 담은 DTO
    */
-  @GetMapping("/{id}/login")
+  @GetMapping("/{id}/auth")
   public ResponseEntity<Response<LoginResponse>> getAccount(@PathVariable String id) {
     User user = userService.getUser(id);
     LoginResponse data = new LoginResponse(user.getId(), user.getPassword());
