@@ -3,6 +3,7 @@ package com.nhnacademy.accountapi.service;
 import com.nhnacademy.accountapi.domain.User;
 import com.nhnacademy.accountapi.dto.UserModifyRequest;
 import com.nhnacademy.accountapi.dto.UserRegisterRequest;
+import com.nhnacademy.accountapi.exception.UserAlreadyExistException;
 import com.nhnacademy.accountapi.exception.UserNotFoundException;
 import com.nhnacademy.accountapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User createUser(UserRegisterRequest userRegisterRequest) {
+    if (userRepository.existsById(userRegisterRequest.getId())) {
+      throw new UserAlreadyExistException(userRegisterRequest.getId());
+    }
     User user = User.builder()
         .id(userRegisterRequest.getId())
         .password(passwordEncoder.encode(userRegisterRequest.getPassword()))

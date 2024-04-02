@@ -36,7 +36,7 @@ public class UserController {
    * @param id - 로그인정보를 확인할 user id
    * @return id, password 를 담은 DTO
    */
-  @GetMapping("/{id}/login-info")
+  @GetMapping("/{id}/login")
   public ResponseEntity<Response<LoginResponse>> getAccount(@PathVariable String id) {
     User user = userService.getUser(id);
     LoginResponse data = new LoginResponse(user.getId(), user.getPassword());
@@ -49,7 +49,7 @@ public class UserController {
    * @param id - 조회할 유저 ID
    * @return 유저의 id, status, role 을 담은 DTO
    */
-  @GetMapping("/{id}")
+  @GetMapping("/{id}/info")
   public ResponseEntity<Response<UserResponse>> getUser(@PathVariable String id) {
     User result = userService.getUser(id);
     UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());

@@ -5,6 +5,26 @@ Content-Type: application/json
 {
     "id": "id",
     "password": "pw",
-    "status": "active",
+    "status": "ACTIVE",
     "role": "USER"
 }
+
+### 유저 조회
+GET http://localhost:8080/api/users/id/info
+Content-Type: application/json
+
+### 아이디 비밀번호 조회
+GET http://localhost:8080/api/users/id/login
+
+### 유저 수정
+PUT http://localhost:8080/api/users/id
+Content-Type: application/json
+
+{
+  "password": "tt",
+  "status": "ACTIVE",
+  "role": "USER"
+}
+
+### 유저 삭제
+DELETE http://localhost:8080/api/users/id
