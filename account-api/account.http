@@ -3,18 +3,24 @@ POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
+  "status": "success",
+  "data": {
     "id": "id",
     "password": "pw",
     "status": "ACTIVE",
     "role": "USER"
+  },
+  "message" : "User Info",
+  "timestamp": "yyyy-MM-ddTHH:mm:ss"
 }
+
 
 ### 유저 조회
 GET http://localhost:8080/api/users/id/info
 Content-Type: application/json
 
 ### 아이디 비밀번호 조회
-GET http://localhost:8080/api/users/id/login
+GET http://localhost:8080/api/users/id/auth
 
 ### 유저 수정
 PUT http://localhost:8080/api/users/id

@@ -17,11 +17,21 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder passwordEncoder;
 
+  /***
+   * DB에 저장된 유저 정보 조회
+   * @param id 조회할 유저 ID
+   * @return User - id, password, status, role
+   */
   @Override
   public User getUser(String id) {
     return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("id"));
   }
 
+  /***
+   * DB에 유저 정보 추가
+   * @param userRegisterRequest - id, password, status, role
+   * @return User - id, status, role
+   */
   @Override
   public User createUser(UserRegisterRequest userRegisterRequest) {
     if (userRepository.existsById(userRegisterRequest.getId())) {
@@ -37,10 +47,16 @@ public class UserServiceImpl implements UserService {
     return userRepository.save(user);
   }
 
+  /***
+   * 유저 정보 수정
+   * @param id - 수정할 유저 ID
+   * @param user - 수정할 정보를 담은 DTO : password, status, role
+   * @return
+   */
   @Override
-  public User updateUser(String userId, UserModifyRequest user) {
-    User target = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
+  public User updateUser(String id, UserModifyRequest user) {
+    User target = userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
 
     if (user.getPassword() != null) {
       target.setPassword(passwordEncoder.encode(user.getPassword()));

@@ -2,11 +2,12 @@
 package com.nhnacademy.accountapi.controller;
 
 import com.nhnacademy.accountapi.domain.User;
+import com.nhnacademy.accountapi.dto.CommonResponse;
 import com.nhnacademy.accountapi.dto.LoginResponse;
-import com.nhnacademy.accountapi.dto.Response;
 import com.nhnacademy.accountapi.dto.UserModifyRequest;
 import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 import com.nhnacademy.accountapi.dto.UserResponse;
+import com.nhnacademy.accountapi.exception.CommonResponseFailException;
 import com.nhnacademy.accountapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,10 +38,10 @@ public class UserController {
    * @return id, password 를 담은 DTO
    */
   @GetMapping("/{id}/auth")
-  public ResponseEntity<Response<LoginResponse>> getAccount(@PathVariable String id) {
+  public ResponseEntity<CommonResponse<LoginResponse>> getAccount(@PathVariable String id) {
     User user = userService.getUser(id);
     LoginResponse data = new LoginResponse(user.getId(), user.getPassword());
-    return ResponseEntity.ok(Response.success(data, "user id, password info"));
+    return ResponseEntity.ok(CommonResponse.success(data, "user id, password info"));
   }
 
 
@@ -50,19 +51,20 @@ public class UserController {
    * @return 유저의 id, status, role 을 담은 DTO
    */
   @GetMapping("/{id}/info")
-  public ResponseEntity<Response<UserResponse>> getUser(@PathVariable String id) {
+  public ResponseEntity<CommonResponse<UserResponse>> getUser(@PathVariable String id) {
     User result = userService.getUser(id);
     UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
-    return ResponseEntity.ok(Response.success(data, "User Info"));
+    return ResponseEntity.ok(CommonResponse.success(data, "User Info"));
   }
 
 
   @PostMapping
-  public ResponseEntity<Response<UserResponse>> registerUser(
-      @RequestBody UserRegisterRequest user) {
-    User result = userService.createUser(user);
+  public ResponseEntity<CommonResponse<UserResponse>> registerUser(
+      @RequestBody CommonResponse<UserRegisterRequest> user) {
+    User result = userService.createUser(
+        user.dataOrElseThrow(() -> new CommonResponseFailException(user.getMessage())));
     UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
-    return ResponseEntity.ok(Response.success(data, user.getId() + " created"));
+    return ResponseEntity.ok(CommonResponse.success(data, user.getData().getId() + " created"));
   }
 
   /***
@@ -72,11 +74,13 @@ public class UserController {
    * @return 수정된 User 정보 (id, status, role)
    */
   @PutMapping("/{id}")
-  public ResponseEntity<Response<UserResponse>> modifyUser(@PathVariable String id, @RequestBody UserModifyRequest user) {
-    User result = userService.updateUser(id, user);
+  public ResponseEntity<CommonResponse<UserResponse>> modifyUser(@PathVariable String id,
+      @RequestBody CommonResponse<UserModifyRequest> user) {
+    User result = userService.updateUser(id,
+        user.dataOrElseThrow(() -> new CommonResponseFailException(user.getMessage())));
     UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
 
-    return ResponseEntity.ok(Response.success(data, id+"modified"));
+    return ResponseEntity.ok(CommonResponse.success(data, id + "modified"));
   }
 
   /***
@@ -85,9 +89,10 @@ public class UserController {
    * @return 단순 성공 메세지 반환
    */
   @DeleteMapping("/{id}")
-  public ResponseEntity<Response<String>> deleteUser(@PathVariable String id) {
+  public ResponseEntity<CommonResponse<String>> deleteUser(@PathVariable String id) {
     userService.deleteUser(id);
-    return ResponseEntity.ok(Response.success(null, String.format("[%s] deleted successfully !", id)));
+    return ResponseEntity.ok(
+        CommonResponse.success(null, String.format("[%s] deleted successfully !", id)));
   }
 
 }
