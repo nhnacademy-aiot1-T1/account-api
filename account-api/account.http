@@ -5,25 +5,24 @@ Content-Type: application/json
 {
   "status": "success",
   "data": {
-    "id": "id",
-    "password": "pw",
+    "id": "admin",
+    "password": "1234",
     "status": "ACTIVE",
-    "role": "USER"
+    "role": "ADMIN"
   },
-  "message" : "User Info",
-  "timestamp": "yyyy-MM-ddTHH:mm:ss"
+  "message" : "User Info"
 }
 
 
 ### 유저 조회
-GET http://localhost:8080/api/users/id/info
+GET http://localhost:8080/api/users/admin/info
 Content-Type: application/json
 
 ### 아이디 비밀번호 조회
-GET http://localhost:8080/api/users/id/auth
+GET http://localhost:8080/api/users/admin/auth
 
 ### 유저 수정
-PUT http://localhost:8080/api/users/id
+PUT http://localhost:8080/api/users/admin
 Content-Type: application/json
 
 {
@@ -33,4 +32,4 @@ Content-Type: application/json
 }
 
 ### 유저 삭제
-DELETE http://localhost:8080/api/users/id
+DELETE http://localhost:8080/api/users/admin

@@ -15,13 +15,15 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-    return httpSecurity
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
         .httpBasic().disable()
         .csrf().disable()
         .cors().and()
         .authorizeRequests()
-        .antMatchers("/api/**").permitAll().and()
-        .build();
+        .antMatchers("/api", "/api/**")
+        .permitAll();
+
+    return http.build();
   }
 }

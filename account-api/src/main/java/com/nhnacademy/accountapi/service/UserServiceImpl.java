@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
    * 유저 정보 수정
    * @param id - 수정할 유저 ID
    * @param user - 수정할 정보를 담은 DTO : password, status, role
-   * @return
+   * @return 수정된 유저 정보 - id, status, role
    */
   @Override
   public User updateUser(String id, UserModifyRequest user) {
@@ -72,11 +72,15 @@ public class UserServiceImpl implements UserService {
     return userRepository.save(target);
   }
 
+  /***
+   * 유저 정보 삭제
+   * @param id - 삭제할 유저 ID
+   */
   @Override
-  public void deleteUser(String userId) {
-    if (!userRepository.existsById(userId)) {
-      throw new UserNotFoundException(userId);
+  public void deleteUser(String id) {
+    if (!userRepository.existsById(id)) {
+      throw new UserNotFoundException(id);
     }
-    userRepository.deleteById(userId);
+    userRepository.deleteById(id);
   }
 }
