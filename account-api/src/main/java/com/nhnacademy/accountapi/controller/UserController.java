@@ -7,7 +7,6 @@ import com.nhnacademy.accountapi.dto.LoginResponse;
 import com.nhnacademy.accountapi.dto.UserModifyRequest;
 import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 import com.nhnacademy.accountapi.dto.UserResponse;
-import com.nhnacademy.accountapi.exception.CommonResponseFailException;
 import com.nhnacademy.accountapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,11 +59,10 @@ public class UserController {
 
   @PostMapping
   public ResponseEntity<CommonResponse<UserResponse>> registerUser(
-      @RequestBody CommonResponse<UserRegisterRequest> user) {
-    User result = userService.createUser(
-        user.dataOrElseThrow(() -> new CommonResponseFailException(user.getMessage())));
+      @RequestBody UserRegisterRequest user) {
+    User result = userService.createUser(user);
     UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
-    return ResponseEntity.ok(CommonResponse.success(data, user.getData().getId() + " created"));
+    return ResponseEntity.ok(CommonResponse.success(data, user.getId() + " created"));
   }
 
   /***
@@ -75,9 +73,8 @@ public class UserController {
    */
   @PutMapping("/{id}")
   public ResponseEntity<CommonResponse<UserResponse>> modifyUser(@PathVariable String id,
-      @RequestBody CommonResponse<UserModifyRequest> user) {
-    User result = userService.updateUser(id,
-        user.dataOrElseThrow(() -> new CommonResponseFailException(user.getMessage())));
+      @RequestBody UserModifyRequest user) {
+    User result = userService.updateUser(id, user);
     UserResponse data = new UserResponse(result.getId(), result.getStatus(), result.getRole());
 
     return ResponseEntity.ok(CommonResponse.success(data, id + "modified"));
