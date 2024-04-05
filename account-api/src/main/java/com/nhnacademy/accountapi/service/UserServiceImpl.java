@@ -3,6 +3,7 @@ package com.nhnacademy.accountapi.service;
 import com.nhnacademy.accountapi.domain.User;
 import com.nhnacademy.accountapi.dto.UserModifyRequest;
 import com.nhnacademy.accountapi.dto.UserRegisterRequest;
+import com.nhnacademy.accountapi.exception.UserAlreadyExistException;
 import com.nhnacademy.accountapi.exception.UserNotFoundException;
 import com.nhnacademy.accountapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,26 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder passwordEncoder;
 
+  /***
+   * DB에 저장된 유저 정보 조회
+   * @param id 조회할 유저 ID
+   * @return User - id, password, status, role
+   */
   @Override
   public User getUser(String id) {
     return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("id"));
   }
 
+  /***
+   * DB에 유저 정보 추가
+   * @param userRegisterRequest - id, password, status, role
+   * @return User - id, status, role
+   */
   @Override
   public User createUser(UserRegisterRequest userRegisterRequest) {
+    if (userRepository.existsById(userRegisterRequest.getId())) {
+      throw new UserAlreadyExistException(userRegisterRequest.getId());
+    }
     User user = User.builder()
         .id(userRegisterRequest.getId())
         .password(passwordEncoder.encode(userRegisterRequest.getPassword()))
@@ -33,10 +47,16 @@ public class UserServiceImpl implements UserService {
     return userRepository.save(user);
   }
 
+  /***
+   * 유저 정보 수정
+   * @param id - 수정할 유저 ID
+   * @param user - 수정할 정보를 담은 DTO : password, status, role
+   * @return 수정된 유저 정보 - id, status, role
+   */
   @Override
-  public User updateUser(String userId, UserModifyRequest user) {
-    User target = userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException(userId));
+  public User updateUser(String id, UserModifyRequest user) {
+    User target = userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
 
     if (user.getPassword() != null) {
       target.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -52,11 +72,15 @@ public class UserServiceImpl implements UserService {
     return userRepository.save(target);
   }
 
+  /***
+   * 유저 정보 삭제
+   * @param id - 삭제할 유저 ID
+   */
   @Override
-  public void deleteUser(String userId) {
-    if (!userRepository.existsById(userId)) {
-      throw new UserNotFoundException(userId);
+  public void deleteUser(String id) {
+    if (!userRepository.existsById(id)) {
+      throw new UserNotFoundException(id);
     }
-    userRepository.deleteById(userId);
+    userRepository.deleteById(id);
   }
 }

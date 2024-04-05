@@ -3,8 +3,33 @@ POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
-    "id": "id",
-    "password": "pw",
-    "status": "active",
-    "role": "USER"
+  "status": "success",
+  "data": {
+    "id": "admin",
+    "password": "1234",
+    "status": "ACTIVE",
+    "role": "ADMIN"
+  },
+  "message" : "User Info"
 }
+
+
+### 유저 조회
+GET http://localhost:8080/api/users/admin/info
+Content-Type: application/json
+
+### 아이디 비밀번호 조회
+GET http://localhost:8080/api/users/admin/auth
+
+### 유저 수정
+PUT http://localhost:8080/api/users/admin
+Content-Type: application/json
+
+{
+  "password": "tt",
+  "status": "ACTIVE",
+  "role": "USER"
+}
+
+### 유저 삭제
+DELETE http://localhost:8080/api/users/admin

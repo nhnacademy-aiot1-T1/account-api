@@ -42,20 +42,36 @@ class UserControllerTest {
 
 
   @Test
-  @DisplayName("유저 정보 조회")
-  void getUser() throws Exception {
-     User userResponse = User.builder()
+  @DisplayName("유저 정보 조회 - id")
+  void getUserInfo() throws Exception {
+     User userRequest = User.builder()
          .id("user")
          .status(UserStatus.ACTIVE)
          .role(UserRole.USER)
          .build();
-     when(userService.getUser(userResponse.getId())).thenReturn(userResponse);
+     when(userService.getUser(userRequest.getId())).thenReturn(userRequest);
 
-    mockMvc.perform(get("/api/users/{id}", userResponse.getId()).header("X-USER-ID", userResponse.getId()))
+    mockMvc.perform(get("/api/users/{id}/info", userRequest.getId()).header("X-USER-ID", userRequest.getId()))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("user"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value("USER"))
+    ;
+  }
+
+  @Test
+  @DisplayName("유저 정보 조회 - id, password")
+  void getUserAuth() throws Exception {
+    User userRequest = User.builder()
+        .id("user")
+        .password("encoding password")
+        .build();
+    when(userService.getUser(userRequest.getId())).thenReturn(userRequest);
+
+    mockMvc.perform(get("/api/users/{id}/auth", userRequest.getId()).header("X-USER-ID", userRequest.getId()))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("user"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.password").value("encoding password"))
     ;
   }
 
@@ -73,7 +89,7 @@ class UserControllerTest {
 
     String body = objectMapper.writeValueAsString(user);
 
-    mockMvc.perform(post("/api/users/{id}", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
+    mockMvc.perform(post("/api/users", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("new"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE"))
