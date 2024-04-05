@@ -13,21 +13,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(UserNotFoundException.class)
-  public ResponseEntity<CommonResponse<String>> handleUserNotFoundException(UserNotFoundException e) {
+  public ResponseEntity<CommonResponse<String>> handleUserNotFoundException(
+      UserNotFoundException e) {
     CommonResponse<String> error = CommonResponse.fail(e.getMessage());
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
 
   @ExceptionHandler(UserAlreadyExistException.class)
-  public ResponseEntity<CommonResponse<String>> handleUserAlreadyExistException(UserAlreadyExistException e) {
+  public ResponseEntity<CommonResponse<String>> handleUserAlreadyExistException(
+      UserAlreadyExistException e) {
     CommonResponse<String> error = CommonResponse.fail(e.getMessage());
 
     return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
   }
 
   @ExceptionHandler(CommonResponseFailException.class)
-  public ResponseEntity<CommonResponse<String>> handleRequestStatusFail(CommonResponseFailException e) {
+  public ResponseEntity<CommonResponse<String>> handleRequestStatusFail(
+      CommonResponseFailException e) {
     CommonResponse<String> error = CommonResponse.fail(null, e.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }

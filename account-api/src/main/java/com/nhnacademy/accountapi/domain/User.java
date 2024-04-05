@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -26,10 +28,18 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class User {
   @Id
-  private String id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @Column(name = "auth_type")
+  @Enumerated(EnumType.STRING)
+  private AuthType authType;
 
   @Column
-  private String password;
+  private String name;
+
+  @Column
+  private String email;
 
   @Column
   @Enumerated(EnumType.STRING)
@@ -44,7 +54,11 @@ public class User {
   }
 
   public static enum UserStatus {
-    ACTIVE, DEACTIVATE
+    ACTIVE, DEACTIVATED
+  }
+
+  public static enum AuthType {
+    DIRECT, PAYCO
   }
 
 }
