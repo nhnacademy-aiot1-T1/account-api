@@ -7,13 +7,13 @@ import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 
 public interface UserService {
 
-  UserAuth getUserAuth(String user_id);
-//
-//  User getUserInfo(String user_id);
+  UserAuth getUserAuth(String userId);
+
+  User getUserInfo(Long userId);
 
   void createUser(UserRegisterRequest userRegisterRequest);
 
-//  User updateUser(String userId, UserModifyRequest user);
-//
-//  void deleteUser(Long id);
+  void updateUser(Long userId, UserModifyRequest user);
+
+  void deleteUser(Long id);
 }

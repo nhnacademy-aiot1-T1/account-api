@@ -1,5 +1,6 @@
 package com.nhnacademy.accountapi.domain;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,6 +15,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 /***
  * DB에서 관리되는 User Entity
@@ -26,6 +29,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@DynamicInsert
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,10 +46,12 @@ public class User {
   private String email;
 
   @Column
+  @ColumnDefault("ACTIVE")
   @Enumerated(EnumType.STRING)
   private UserStatus status;
 
   @Column
+  @ColumnDefault("USER")
   @Enumerated(EnumType.STRING)
   private UserRole role;
 

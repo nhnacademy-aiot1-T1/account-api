@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### 유저 조회
-GET http://localhost:8080/api/users/admin/info
+GET http://localhost:8080/api/users/1/info
 Content-Type: application/json
 
 ### 아이디 비밀번호 조회
@@ -38,4 +38,4 @@ Content-Type: application/json
 }
 
 ### 유저 삭제
-DELETE http://localhost:8080/api/users/admin
+DELETE http://localhost:8080/api/users/1
