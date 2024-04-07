@@ -106,9 +106,9 @@ class UserControllerTest {
 
     mockMvc.perform(
             post("/api/users", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
-        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
         .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
-    ;
+
   }
 
   @Test
@@ -143,6 +143,6 @@ class UserControllerTest {
     mockMvc.perform(delete("/api/users/{id}", userId))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(
-            MockMvcResultMatchers.jsonPath("$.message").value("[user] deleted successfully !"));
+            MockMvcResultMatchers.jsonPath("$.message").value("["+userId+"] deleted successfully !"));
   }
 }
