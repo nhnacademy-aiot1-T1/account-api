@@ -16,7 +16,7 @@ Content-Type: application/json
 {
   "userId": "admin",
   "password": "1234",
-  "name": "ACTIVE",
+  "name": "admin",
   "email": "admin@admi"
 }
 
@@ -28,13 +28,13 @@ Content-Type: application/json
 GET http://localhost:8080/api/users/admin/auth
 
 ### 유저 수정
-PUT http://localhost:8080/api/users/admin
+PUT http://localhost:8080/api/users/1
 Content-Type: application/json
 
 {
-  "password": "tt",
+  "password": "",
   "status": "ACTIVE",
-  "role": "USER"
+  "role": "ADMIN"
 }
 
 ### 유저 삭제
