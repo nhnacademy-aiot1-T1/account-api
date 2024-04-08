@@ -18,7 +18,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env: # 환경 변수 등록
+      ACCOUNT_API_MYSQL_PASSWORD: ${{ secrets.ACCOUNT_API_MYSQL_PASSWORD }}
     strategy:
       matrix:
         project: [ account-api ]
@@ -31,13 +32,15 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
-    
-    - name: Make application-db.yml
-      working-directory: ${{ matrix.project }}
-      run : |
-        cd ./src/main/resources
-        touch ./application-db.yml
-        echo "${{ secrets.ACCOUNT_API_MYSQL_PROPERTIES }}" >> ./application-db.yml
+    - name: Prepare application.properties
+      run: |
+        sed -i 's/\${ACCOUNT_API_MYSQL_PASSWORD}/'"$ACCOUNT_API_MYSQL_PASSWORD"'/g' src/main/resources/application-db.yml
+#    - name: Make application-db.yml
+#      working-directory: ${{ matrix.project }}
+#      run : |
+#        cd ./src/main/resources
+#        touch ./application-db.yml
+#        echo "${{ secrets.ACCOUNT_API_MYSQL_PROPERTIES }}" >> ./application-db.yml
         
     
     - name: Build with Maven
