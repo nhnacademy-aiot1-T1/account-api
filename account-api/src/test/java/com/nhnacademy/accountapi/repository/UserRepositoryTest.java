@@ -6,7 +6,6 @@ import com.nhnacademy.accountapi.domain.User;
 import com.nhnacademy.accountapi.domain.User.AuthType;
 import com.nhnacademy.accountapi.domain.User.UserRole;
 import com.nhnacademy.accountapi.domain.User.UserStatus;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
