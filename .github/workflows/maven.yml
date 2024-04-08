@@ -32,7 +32,9 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
+
     - name: Prepare application.properties
+      working-directory: ${{ matrix.project }}
       run: |
         sed -i 's/\${ACCOUNT_API_MYSQL_PASSWORD}/'"$ACCOUNT_API_MYSQL_PASSWORD"'/g' src/main/resources/application-db.yml
 #    - name: Make application-db.yml
