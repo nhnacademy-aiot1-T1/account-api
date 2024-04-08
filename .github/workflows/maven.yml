@@ -32,12 +32,12 @@ jobs:
         distribution: 'temurin'
         cache: maven
     
-    - name: Make application-db.properties
+    - name: Make application-db.yml
       working-directory: ${{ matrix.project }}
       run : |
         cd ./src/main/resources
-        touch ./application-db.properties
-        echo "${{ secrets.ACCOUNT_API_MYSQL_PROPERTIES }}" >> ./application-db.properties
+        touch ./application-db.yml
+        echo "${{ secrets.ACCOUNT_API_MYSQL_PROPERTIES }}" >> ./application-db.yml
         
     
     - name: Build with Maven
