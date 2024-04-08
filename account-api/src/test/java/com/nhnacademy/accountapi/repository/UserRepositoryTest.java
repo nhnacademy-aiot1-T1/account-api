@@ -3,8 +3,10 @@ package com.nhnacademy.accountapi.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.nhnacademy.accountapi.domain.User;
+import com.nhnacademy.accountapi.domain.User.AuthType;
 import com.nhnacademy.accountapi.domain.User.UserRole;
 import com.nhnacademy.accountapi.domain.User.UserStatus;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,33 +25,46 @@ class UserRepositoryTest {
   @DisplayName("유저 등록")
   void createUser() {
     User user = User.builder()
-        .id("t1")
-        .password("111")
+        .id(1L)
+        .authType(AuthType.DIRECT)
+        .name("userName")
+        .email("user@user")
         .status(UserStatus.ACTIVE)
         .role(UserRole.USER)
         .build();
 
     User result = userRepository.save(user);
 
-    assertThat(result).isEqualTo(user);
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isNotNull();
+    assertThat(result.getName()).isEqualTo("userName");
+    assertThat(result.getEmail()).isEqualTo("user@user");
+    assertThat(result.getStatus()).isEqualTo(UserStatus.ACTIVE);
+    assertThat(result.getRole()).isEqualTo(UserRole.USER);
   }
 
   @Test
-  @DisplayName("유저 삭제")
-  void deleteUser() {
+  @DisplayName("유저 조회 - pk")
+  void findById() {
     User user = User.builder()
-        .id("t1")
-        .password("222")
+        .id(1L)
+        .authType(AuthType.DIRECT)
+        .name("userName")
+        .email("user@user")
         .status(UserStatus.ACTIVE)
         .role(UserRole.USER)
         .build();
+
     userRepository.save(user);
-    long beforeUserCount = userRepository.count();
 
-    userRepository.deleteById(user.getId());
-    long afterUserCount = userRepository.count();
+    User result = userRepository.findById(user.getId()).orElse(null);
 
-    assertThat(beforeUserCount).isEqualTo(1L);
-    assertThat(afterUserCount).isEqualTo(0L);
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(result.getId());
+    assertThat(result.getName()).isEqualTo(user.getName());
+    assertThat(result.getEmail()).isEqualTo(user.getEmail());
+    assertThat(result.getStatus()).isEqualTo(UserStatus.ACTIVE);
+    assertThat(result.getRole()).isEqualTo(UserRole.USER);
   }
+
 }

@@ -10,8 +10,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.accountapi.domain.User;
+import com.nhnacademy.accountapi.domain.User.AuthType;
 import com.nhnacademy.accountapi.domain.User.UserRole;
 import com.nhnacademy.accountapi.domain.User.UserStatus;
+import com.nhnacademy.accountapi.domain.UserAuth;
 import com.nhnacademy.accountapi.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
+
   @Autowired
   MockMvc mockMvc;
 
@@ -42,91 +45,104 @@ class UserControllerTest {
 
 
   @Test
-  @DisplayName("유저 정보 조회 - id")
-  void getUserInfo() throws Exception {
-     User userRequest = User.builder()
-         .id("user")
-         .status(UserStatus.ACTIVE)
-         .role(UserRole.USER)
-         .build();
-     when(userService.getUser(userRequest.getId())).thenReturn(userRequest);
-
-    mockMvc.perform(get("/api/users/{id}/info", userRequest.getId()).header("X-USER-ID", userRequest.getId()))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("user"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value("USER"))
-    ;
-  }
-
-  @Test
-  @DisplayName("유저 정보 조회 - id, password")
+  @DisplayName("Login test : auth 조회 - id, password")
   void getUserAuth() throws Exception {
-    User userRequest = User.builder()
-        .id("user")
-        .password("encoding password")
-        .build();
-    when(userService.getUser(userRequest.getId())).thenReturn(userRequest);
+    String userId = "userId";
+    String password = "encoding password";
 
-    mockMvc.perform(get("/api/users/{id}/auth", userRequest.getId()).header("X-USER-ID", userRequest.getId()))
+    UserAuth returnUser = new UserAuth(1L, userId, password);
+
+    when(userService.getUserAuth(userId)).thenReturn(returnUser);
+
+    mockMvc.perform(
+            get("/api/users/{id}/auth", userId))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("user"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.password").value("encoding password"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(userId))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.password").value(password))
     ;
   }
 
   @Test
-  @DisplayName("유저 등록")
-  void registerUser() throws Exception {
+  @DisplayName("info 조회 test")
+  void getUserInfo() throws Exception {
     User user = User.builder()
-        .id("new")
-        .password("123")
+        .id(1L)
+        .authType(AuthType.DIRECT)
+        .name("userName")
+        .email("user@user")
         .status(UserStatus.ACTIVE)
         .role(UserRole.USER)
         .build();
 
-    when(userService.createUser(any())).thenReturn(user);
+    when(userService.getUserInfo(user.getId())).thenReturn(user);
+
+    mockMvc.perform(
+            get("/api/users/{id}/info", user.getId()))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(user.getId().toString()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.authType").value(user.getAuthType().toString()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value(user.getName()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value(user.getEmail()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value(user.getStatus().toString()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value(user.getRole().toString()))
+    ;
+  }
+
+  @Test
+  @DisplayName("회원가입 테스트")
+  void registerUser() throws Exception {
+    User user = User.builder()
+        .id(1L)
+        .authType(AuthType.DIRECT)
+        .name("userName")
+        .email("user@user")
+        .status(UserStatus.ACTIVE)
+        .role(UserRole.USER)
+        .build();
+
+    Mockito.doNothing().when(userService).createUser(any());
 
     String body = objectMapper.writeValueAsString(user);
 
-    mockMvc.perform(post("/api/users", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("new"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value("USER"))
-        ;
+    mockMvc.perform(
+            post("/api/users", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
+        .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+
   }
 
   @Test
   @DisplayName("유저 정보 수정")
   void updateUser() throws Exception {
     User user = User.builder()
-        .id("modify")
-        .password("123")
+        .id(1L)
+        .authType(AuthType.DIRECT)
+        .name("userName")
+        .email("user@user")
         .status(UserStatus.ACTIVE)
         .role(UserRole.USER)
         .build();
 
-    when(userService.updateUser(any(),any())).thenReturn(user);
+    Mockito.doNothing().when(userService).updateUser(any(), any());
 
     String body = objectMapper.writeValueAsString(user);
 
-    mockMvc.perform(put("/api/users/{id}", user.getId()).header("X-USER-ID", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
+    mockMvc.perform(put("/api/users/{id}", user.getId())
+            .contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("modify"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value("ACTIVE"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value("USER"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
     ;
   }
 
   @Test
   @DisplayName("유저 삭제")
   void deleteUser() throws Exception {
-    String userId = "user";
+    Long userId = 0L;
     Mockito.doNothing().when(userService).deleteUser(userId);
 
-    mockMvc.perform(delete("/api/users/{id}", userId).header("X-USER-ID", userId))
+    mockMvc.perform(delete("/api/users/{id}", userId))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("[user] deleted successfully !"));
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.message").value("["+userId+"] deleted successfully !"));
   }
 }

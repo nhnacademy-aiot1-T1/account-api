@@ -16,26 +16,26 @@ Content-Type: application/json
 {
   "userId": "admin",
   "password": "1234",
-  "name": "ACTIVE",
+  "name": "admin",
   "email": "admin@admi"
 }
 
 ### 유저 조회
-GET http://localhost:8080/api/users/admin/info
+GET http://localhost:8080/api/users/1/info
 Content-Type: application/json
 
 ### 아이디 비밀번호 조회
 GET http://localhost:8080/api/users/admin/auth
 
 ### 유저 수정
-PUT http://localhost:8080/api/users/admin
+PUT http://localhost:8080/api/users/1
 Content-Type: application/json
 
 {
-  "password": "tt",
+  "password": "",
   "status": "ACTIVE",
-  "role": "USER"
+  "role": "ADMIN"
 }
 
 ### 유저 삭제
-DELETE http://localhost:8080/api/users/admin
+DELETE http://localhost:8080/api/users/1
