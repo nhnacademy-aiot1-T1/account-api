@@ -1,7 +1,7 @@
 drop table if exists user_auth;
-drop table if exists user;
+drop table if exists users;
 
-create table user
+create table users
 (
     id        bigint auto_increment,
     auth_type varchar(20) NOT NULL,
@@ -18,5 +18,5 @@ create table user_auth
     user_id  varchar(20) NOT NULL ,
     password varchar(100) NOT NULL ,
     constraint pk_userauth primary key (id),
-    constraint fk_userauth_user foreign key (id) references user (id) on delete cascade
+    constraint fk_userauth_user foreign key (id) references users (id) on delete cascade
 );

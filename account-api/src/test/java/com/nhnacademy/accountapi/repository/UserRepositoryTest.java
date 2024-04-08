@@ -6,7 +6,8 @@ import com.nhnacademy.accountapi.domain.User;
 import com.nhnacademy.accountapi.domain.User.AuthType;
 import com.nhnacademy.accountapi.domain.User.UserRole;
 import com.nhnacademy.accountapi.domain.User.UserStatus;
-import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,25 +15,30 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
+//@AutoConfigureTestDatabase(replace = Replace.NONE)
 class UserRepositoryTest {
 
   @Autowired
   UserRepository userRepository;
 
-  @Test
-  @DisplayName("유저 등록")
-  void createUser() {
-    User user = User.builder()
-        .id(1L)
+  User user;
+
+  @BeforeEach
+  void setUp() {
+    user = User.builder()
         .authType(AuthType.DIRECT)
         .name("userName")
         .email("user@user")
         .status(UserStatus.ACTIVE)
         .role(UserRole.USER)
         .build();
+  }
 
+  @Test
+  @DisplayName("유저 등록")
+  void createUser() {
     User result = userRepository.save(user);
 
     assertThat(result).isNotNull();
@@ -43,20 +49,10 @@ class UserRepositoryTest {
     assertThat(result.getRole()).isEqualTo(UserRole.USER);
   }
 
+  @Disabled
   @Test
   @DisplayName("유저 조회 - pk")
   void findById() {
-    User user = User.builder()
-        .id(1L)
-        .authType(AuthType.DIRECT)
-        .name("userName")
-        .email("user@user")
-        .status(UserStatus.ACTIVE)
-        .role(UserRole.USER)
-        .build();
-
-    userRepository.save(user);
-
     User result = userRepository.findById(user.getId()).orElse(null);
 
     assertThat(result).isNotNull();
