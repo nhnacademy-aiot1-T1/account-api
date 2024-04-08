@@ -11,12 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
+//@AutoConfigureTestDatabase(replace = Replace.NONE)
 class UserAuthRepositoryTest {
   @Autowired
-  UserRepository userRepository;
+  TestEntityManager entityManager;
 
   @Autowired
   UserAuthRepository userAuthRepository;
@@ -36,8 +37,8 @@ class UserAuthRepositoryTest {
   @Test
   @DisplayName("유저 id로 존재여부 체크")
   void findById() {
-    User user = User.builder().id(1L).authType(AuthType.DIRECT).build();
-    userRepository.save(user);
+    User user = User.builder().authType(AuthType.DIRECT).build();
+    entityManager.persist(user);
 
     UserAuth userAuth = new UserAuth(1L, "userId", "password");
     userAuthRepository.save(userAuth);

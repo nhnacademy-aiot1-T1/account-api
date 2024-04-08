@@ -30,6 +30,4 @@ spring:
     name: account-service
   profiles:
     active: db
-  sql:
-    init:
-      mode: always
+

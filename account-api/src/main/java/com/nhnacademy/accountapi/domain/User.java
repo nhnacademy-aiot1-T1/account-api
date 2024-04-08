@@ -22,7 +22,7 @@ import org.hibernate.annotations.DynamicInsert;
  * DB에서 관리되는 User Entity
  */
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @Setter
 @Builder
