@@ -1,5 +1,0 @@
-spring:
-  datasource:
-    url: jdbc:mysql://133.186.244.96:3306/nhn_academy_10
-    username: nhn_academy_10
-    password: ${ACCOUNT_API_MYSQL_PASSWORD}
