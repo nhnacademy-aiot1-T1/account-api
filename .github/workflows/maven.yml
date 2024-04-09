@@ -37,12 +37,12 @@ jobs:
 #      working-directory: ${{ matrix.project }}
 #      run: |
 #        sed -i 's/\${ACCOUNT_API_MYSQL_PASSWORD}/'"$ACCOUNT_API_MYSQL_PASSWORD"'/g' src/main/resources/application-db.yml
-    - name: Make application-db.yml
-      working-directory: ${{ matrix.project }}
-      run : |
-        cd ./src/main/resources
-        touch ./application-db.yml
-        echo "${{ secrets.ACCOUNT_API_MYSQL_PROPERTIES }}" >> ./application-db.yml
+    # - name: Make application-db.yml
+    #   working-directory: ${{ matrix.project }}
+    #   run : |
+    #     cd ./src/main/resources
+    #     touch ./application-db.yml
+    #     echo "${{ secrets.ACCOUNT_API_MYSQL_PROPERTIES }}" >> ./application-db.yml
         
     
     - name: Build with Maven
