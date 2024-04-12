@@ -1,14 +1,15 @@
 
 package com.nhnacademy.accountapi.controller;
 
-import com.nhnacademy.accountapi.domain.User;
-import com.nhnacademy.accountapi.domain.UserAuth;
+import com.nhnacademy.accountapi.domain.Account;
+import com.nhnacademy.accountapi.domain.AccountAuth;
 import com.nhnacademy.accountapi.dto.CommonResponse;
 import com.nhnacademy.accountapi.dto.LoginResponse;
 import com.nhnacademy.accountapi.dto.UserModifyRequest;
 import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 import com.nhnacademy.accountapi.dto.UserResponse;
-import com.nhnacademy.accountapi.service.UserService;
+import com.nhnacademy.accountapi.service.AccountService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,9 +30,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-public class UserController {
+public class AccountController {
 
-  private final UserService userService;
+  private final AccountService accountService;
+
+  @GetMapping
+  public ResponseEntity<CommonResponse<List<Account>>> getAccountList() {
+    List<Account> accountList = accountService.getAccountList();
+    return ResponseEntity.ok(CommonResponse.success(accountList, "account list"));
+  }
 
   /***
    * auth server에서 id, password를 체크하기 위해 보내는 유저 정보
@@ -39,10 +46,10 @@ public class UserController {
    * @return id, password 를 담은 DTO
    */
   @GetMapping("/{userId}/auth")
-  public ResponseEntity<CommonResponse<LoginResponse>> getAccount(@PathVariable String userId) {
-    UserAuth user = userService.getUserAuth(userId);
-    LoginResponse data = new LoginResponse(user.getUserId(), user.getPassword());
-    return ResponseEntity.ok(CommonResponse.success(data, "user id, password info"));
+  public ResponseEntity<CommonResponse<LoginResponse>> getAccountAuth(@PathVariable String userId) {
+    AccountAuth user = accountService.getAccountAuth(userId);
+    LoginResponse data = new LoginResponse(user.getLoginId(), user.getPassword());
+    return ResponseEntity.ok(CommonResponse.success(data, "login id, password info"));
   }
 
   /***
@@ -51,8 +58,8 @@ public class UserController {
    * @return 유저의 id, status, role 을 담은 DTO
    */
   @GetMapping("/{id}/info")
-  public ResponseEntity<CommonResponse<User>> getUser(@PathVariable Long id) {
-    User data = userService.getUserInfo(id);  // FIXME : 조회가 필요한 정보에 따라 DTO 필드 변경해야함
+  public ResponseEntity<CommonResponse<Account>> getAccountInfo(@PathVariable Long id) {
+    Account data = accountService.getAccountInfo(id);  // FIXME : 조회가 필요한 정보에 따라 DTO 필드 변경해야함
     return ResponseEntity.ok(CommonResponse.success(data, "User Info"));
   }
 
@@ -60,7 +67,7 @@ public class UserController {
   @PostMapping
   public ResponseEntity<CommonResponse<UserResponse>> registerUser(
       @RequestBody UserRegisterRequest user) {
-    userService.createUser(user);
+    accountService.createAccount(user);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(CommonResponse.success(null, "Welcome " + user.getName() + " !"));
   }
@@ -74,7 +81,7 @@ public class UserController {
   @PutMapping("/{id}")
   public ResponseEntity<CommonResponse<UserResponse>> modifyUser(@PathVariable Long id,
       @RequestBody UserModifyRequest user) {
-    userService.updateUser(id, user);
+    accountService.updateAccount(id, user);
 
     return ResponseEntity.ok(CommonResponse.success(null, id + "modified"));
   }
@@ -86,7 +93,7 @@ public class UserController {
    */
   @DeleteMapping("/{id}")
   public ResponseEntity<CommonResponse<String>> deleteUser(@PathVariable Long id) {
-    userService.deleteUser(id);
+    accountService.deleteAccount(id);
     return ResponseEntity.ok(
         CommonResponse.success(null, String.format("[%s] deleted successfully !", id)));
   }

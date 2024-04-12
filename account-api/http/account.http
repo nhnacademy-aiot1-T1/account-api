@@ -1,15 +1,15 @@
-### 유저 등록
+### 계정 등록
 POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "userId": "user",
+  "userId": "account",
   "password": "1234",
   "name": "user1",
-  "email": "user@user"
+  "email": "account@account"
 }
 
-### 유저 등록
+### 계정 등록
 POST http://localhost:8080/api/users
 Content-Type: application/json
 
@@ -20,14 +20,17 @@ Content-Type: application/json
   "email": "admin@admi"
 }
 
-### 유저 조회
-GET http://localhost:8080/api/users/1/info
+### 전체 계정 조회
+GET http://localhost:8080/api/users
+
+### 계정 조회
+GET http://localhost:8080/api/users/2/info
 Content-Type: application/json
 
 ### 아이디 비밀번호 조회
 GET http://localhost:8080/api/users/admin/auth
 
-### 유저 수정
+### 계정 수정
 PUT http://localhost:8080/api/users/1
 Content-Type: application/json
 
@@ -37,5 +40,5 @@ Content-Type: application/json
   "role": "ADMIN"
 }
 
-### 유저 삭제
+### 계정 삭제
 DELETE http://localhost:8080/api/users/1

@@ -10,17 +10,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "user_auth")
+@Table(name = "account_auth")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAuth {
+public class AccountAuth {
 
   @Id
   private Long id;
-  @Column(name = "user_id")
-  private String userId;
+  @Column(name = "login_id")
+  private String loginId;
   @Column
   private String password;
 

@@ -3,10 +3,10 @@ POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "userId": "user",
+  "userId": "account",
   "password": "1234",
   "name": "user1",
-  "email": "user@user"
+  "email": "account@account"
 }
 
 ### 유저 등록

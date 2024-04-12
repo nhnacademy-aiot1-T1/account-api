@@ -9,12 +9,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.accountapi.domain.User;
-import com.nhnacademy.accountapi.domain.User.AuthType;
-import com.nhnacademy.accountapi.domain.User.UserRole;
-import com.nhnacademy.accountapi.domain.User.UserStatus;
-import com.nhnacademy.accountapi.domain.UserAuth;
-import com.nhnacademy.accountapi.service.UserService;
+import com.nhnacademy.accountapi.domain.Account;
+import com.nhnacademy.accountapi.domain.Account.AuthType;
+import com.nhnacademy.accountapi.domain.Account.AccountRole;
+import com.nhnacademy.accountapi.domain.Account.AccountStatus;
+import com.nhnacademy.accountapi.domain.AccountAuth;
+import com.nhnacademy.accountapi.service.AccountService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,9 +27,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@WebMvcTest(UserController.class)
+@WebMvcTest(AccountController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class UserControllerTest {
+class AccountControllerTest {
 
   @Autowired
   MockMvc mockMvc;
@@ -41,7 +41,7 @@ class UserControllerTest {
   BCryptPasswordEncoder passwordEncoder;
 
   @MockBean
-  UserService userService;
+  AccountService accountService;
 
 
   @Test
@@ -50,9 +50,9 @@ class UserControllerTest {
     String userId = "userId";
     String password = "encoding password";
 
-    UserAuth returnUser = new UserAuth(1L, userId, password);
+    AccountAuth returnUser = new AccountAuth(1L, userId, password);
 
-    when(userService.getUserAuth(userId)).thenReturn(returnUser);
+    when(accountService.getAccountAuth(userId)).thenReturn(returnUser);
 
     mockMvc.perform(
             get("/api/users/{id}/auth", userId))
@@ -65,47 +65,47 @@ class UserControllerTest {
   @Test
   @DisplayName("info 조회 test")
   void getUserInfo() throws Exception {
-    User user = User.builder()
+    Account account = Account.builder()
         .id(1L)
         .authType(AuthType.DIRECT)
         .name("userName")
         .email("user@user")
-        .status(UserStatus.ACTIVE)
-        .role(UserRole.USER)
+        .status(AccountStatus.ACTIVE)
+        .role(AccountRole.USER)
         .build();
 
-    when(userService.getUserInfo(user.getId())).thenReturn(user);
+    when(accountService.getAccountInfo(account.getId())).thenReturn(account);
 
     mockMvc.perform(
-            get("/api/users/{id}/info", user.getId()))
+            get("/api/users/{id}/info", account.getId()))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(user.getId().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.authType").value(user.getAuthType().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value(user.getName()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value(user.getEmail()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value(user.getStatus().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value(user.getRole().toString()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(account.getId().toString()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.authType").value(account.getAuthType().toString()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value(account.getName()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value(account.getEmail()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.status").value(account.getStatus().toString()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value(account.getRole().toString()))
     ;
   }
 
   @Test
   @DisplayName("회원가입 테스트")
   void registerUser() throws Exception {
-    User user = User.builder()
+    Account account = Account.builder()
         .id(1L)
         .authType(AuthType.DIRECT)
         .name("userName")
         .email("user@user")
-        .status(UserStatus.ACTIVE)
-        .role(UserRole.USER)
+        .status(AccountStatus.ACTIVE)
+        .role(AccountRole.USER)
         .build();
 
-    Mockito.doNothing().when(userService).createUser(any());
+    Mockito.doNothing().when(accountService).createAccount(any());
 
-    String body = objectMapper.writeValueAsString(user);
+    String body = objectMapper.writeValueAsString(account);
 
     mockMvc.perform(
-            post("/api/users", user.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
+            post("/api/users", account.getId()).contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
         .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
 
@@ -114,20 +114,20 @@ class UserControllerTest {
   @Test
   @DisplayName("유저 정보 수정")
   void updateUser() throws Exception {
-    User user = User.builder()
+    Account account = Account.builder()
         .id(1L)
         .authType(AuthType.DIRECT)
         .name("userName")
         .email("user@user")
-        .status(UserStatus.ACTIVE)
-        .role(UserRole.USER)
+        .status(AccountStatus.ACTIVE)
+        .role(AccountRole.USER)
         .build();
 
-    Mockito.doNothing().when(userService).updateUser(any(), any());
+    Mockito.doNothing().when(accountService).updateAccount(any(), any());
 
-    String body = objectMapper.writeValueAsString(user);
+    String body = objectMapper.writeValueAsString(account);
 
-    mockMvc.perform(put("/api/users/{id}", user.getId())
+    mockMvc.perform(put("/api/users/{id}", account.getId())
             .contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
@@ -138,7 +138,7 @@ class UserControllerTest {
   @DisplayName("유저 삭제")
   void deleteUser() throws Exception {
     Long userId = 0L;
-    Mockito.doNothing().when(userService).deleteUser(userId);
+    Mockito.doNothing().when(accountService).deleteAccount(userId);
 
     mockMvc.perform(delete("/api/users/{id}", userId))
         .andExpect(MockMvcResultMatchers.status().isOk())

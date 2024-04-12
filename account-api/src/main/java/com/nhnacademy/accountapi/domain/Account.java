@@ -22,7 +22,7 @@ import org.hibernate.annotations.DynamicInsert;
  * DB에서 관리되는 User Entity
  */
 @Entity
-@Table(name = "users")
+@Table(name = "account")
 @Getter
 @Setter
 @Builder
@@ -30,14 +30,10 @@ import org.hibernate.annotations.DynamicInsert;
 @AllArgsConstructor
 @EqualsAndHashCode
 @DynamicInsert
-public class User {
+public class Account {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  @Column(name = "auth_type")
-  @Enumerated(EnumType.STRING)
-  private AuthType authType;
 
   @Column
   private String name;
@@ -45,21 +41,25 @@ public class User {
   @Column
   private String email;
 
+  @Column(name = "auth_type")
+  @Enumerated(EnumType.STRING)
+  private AuthType authType;
+
   @Column
   @ColumnDefault("ACTIVE")
   @Enumerated(EnumType.STRING)
-  private UserStatus status;
+  private AccountStatus status;
 
   @Column
   @ColumnDefault("USER")
   @Enumerated(EnumType.STRING)
-  private UserRole role;
+  private AccountRole role;
 
-  public static enum UserRole {
-    USER, ADMIN
+  public static enum AccountRole {
+    USER, ADMIN, NONE
   }
 
-  public static enum UserStatus {
+  public static enum AccountStatus {
     ACTIVE, DEACTIVATED
   }
 
