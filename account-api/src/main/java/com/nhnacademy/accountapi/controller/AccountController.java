@@ -4,7 +4,6 @@ package com.nhnacademy.accountapi.controller;
 import com.nhnacademy.accountapi.domain.Account;
 import com.nhnacademy.accountapi.domain.AccountAuth;
 import com.nhnacademy.accountapi.dto.CommonResponse;
-import com.nhnacademy.accountapi.dto.LoginResponse;
 import com.nhnacademy.accountapi.dto.UserModifyRequest;
 import com.nhnacademy.accountapi.dto.UserRegisterRequest;
 import com.nhnacademy.accountapi.dto.UserResponse;
@@ -46,10 +45,9 @@ public class AccountController {
    * @return id, password 를 담은 DTO
    */
   @GetMapping("/{userId}/auth")
-  public ResponseEntity<CommonResponse<LoginResponse>> getAccountAuth(@PathVariable String userId) {
-    AccountAuth user = accountService.getAccountAuth(userId);
-    LoginResponse data = new LoginResponse(user.getLoginId(), user.getPassword());
-    return ResponseEntity.ok(CommonResponse.success(data, "login id, password info"));
+  public ResponseEntity<CommonResponse<AccountAuth>> getAccountAuth(@PathVariable String userId) {
+    AccountAuth account = accountService.getAccountAuth(userId);
+    return ResponseEntity.ok(CommonResponse.success(account, "pk id, login id, password info"));
   }
 
   /***
@@ -83,7 +81,7 @@ public class AccountController {
       @RequestBody UserModifyRequest user) {
     accountService.updateAccount(id, user);
 
-    return ResponseEntity.ok(CommonResponse.success(null, id + "modified"));
+    return ResponseEntity.ok(CommonResponse.success(null, "pk-"+id + " modified"));
   }
 
   /***

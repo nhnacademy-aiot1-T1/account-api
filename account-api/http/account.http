@@ -24,20 +24,18 @@ Content-Type: application/json
 GET http://localhost:8080/api/users
 
 ### 계정 조회
-GET http://localhost:8080/api/users/21/info
+GET http://localhost:8080/api/users/2/info
 Content-Type: application/json
 
 ### 아이디 비밀번호 조회
 GET http://localhost:8080/api/users/admin/auth
 
 ### 계정 수정
-PUT http://localhost:8080/api/users/1
+PUT http://localhost:8080/api/users/3
 Content-Type: application/json
 
 {
-  "password": "",
-  "status": "ACTIVE",
-  "role": "ADMIN"
+  "role": "USER"
 }
 
 ### 계정 삭제
