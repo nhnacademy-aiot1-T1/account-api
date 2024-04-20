@@ -1,12 +1,12 @@
 package com.nhnacademy.accountapi.exception;
 
-public class UserNotFoundException extends RuntimeException {
+public class AccountNotFoundException extends RuntimeException {
 
-  public UserNotFoundException(String id) {
+  public AccountNotFoundException(String id) {
     super(String.format("[%s] not found !", id));
   }
 
-  public UserNotFoundException(Long id) {
+  public AccountNotFoundException(Long id) {
     super(String.format("pk-[%s] not found !", id));
   }
 }

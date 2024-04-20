@@ -6,8 +6,8 @@ import com.nhnacademy.accountapi.domain.Account.AccountStatus;
 import com.nhnacademy.accountapi.domain.AccountAuth;
 import com.nhnacademy.accountapi.dto.UserModifyRequest;
 import com.nhnacademy.accountapi.dto.UserRegisterRequest;
-import com.nhnacademy.accountapi.exception.UserAlreadyExistException;
-import com.nhnacademy.accountapi.exception.UserNotFoundException;
+import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
+import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import com.nhnacademy.accountapi.repository.AccountAuthRepository;
 import com.nhnacademy.accountapi.repository.AccountRepository;
 import java.util.List;
@@ -25,7 +25,11 @@ public class AccountServiceImpl implements AccountService {
 
   @Override
   public AccountAuth getAccountAuth(String userId) {
-    return accountAuthRepository.findByLoginId(userId);
+    AccountAuth accountAuth = accountAuthRepository.findByLoginId(userId);
+    if (accountAuth == null) {
+      throw new AccountNotFoundException(userId);
+    }
+    return accountAuth;
   }
 
   /***
@@ -35,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
    */
   @Override
   public Account getAccountInfo(Long id) {
-    return accountRepository.findById(id).orElseThrow(() -> new UserNotFoundException("id"));
+    return accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException(id));
   }
 
   /***
@@ -45,7 +49,7 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public void createAccount(UserRegisterRequest userRegisterRequest) {
     if (accountAuthRepository.existsByLoginId(userRegisterRequest.getUserId())) {
-      throw new UserAlreadyExistException(userRegisterRequest.getUserId());
+      throw new AccountAlreadyExistException(userRegisterRequest.getUserId());
     }
     Account account = Account.builder()
         .authType(AuthType.DIRECT)
@@ -67,7 +71,7 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public void updateAccount(Long id, UserModifyRequest user) {
     Account target = accountRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException(id));
+        .orElseThrow(() -> new AccountNotFoundException(id));
 
     if (user.getStatus() != null) {
       target.setStatus(user.getStatus());
@@ -78,7 +82,7 @@ public class AccountServiceImpl implements AccountService {
     accountRepository.save(target);
 
     if (user.getPassword() != null) {
-      AccountAuth targetAuth = accountAuthRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
+      AccountAuth targetAuth = accountAuthRepository.findById(id).orElseThrow(()-> new AccountNotFoundException(id));
       targetAuth.setPassword(passwordEncoder.encode(user.getPassword()));
 
       accountAuthRepository.save(targetAuth);
@@ -91,7 +95,7 @@ public class AccountServiceImpl implements AccountService {
    */
   @Override
   public void deleteAccount(Long id) {
-    Account account = accountRepository.findById(id).orElseThrow(()->new UserNotFoundException(id));
+    Account account = accountRepository.findById(id).orElseThrow(()->new AccountNotFoundException(id));
     account.setStatus(AccountStatus.DEACTIVATED);
 
     accountRepository.save(account);

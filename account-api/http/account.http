@@ -3,7 +3,7 @@ POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "userId": "account",
+  "userId": "account2131",
   "password": "1234",
   "name": "user1",
   "email": "account@account"
@@ -24,7 +24,7 @@ Content-Type: application/json
 GET http://localhost:8080/api/users
 
 ### 계정 조회
-GET http://localhost:8080/api/users/2/info
+GET http://localhost:8080/api/users/21/info
 Content-Type: application/json
 
 ### 아이디 비밀번호 조회
@@ -41,4 +41,4 @@ Content-Type: application/json
 }
 
 ### 계정 삭제
-DELETE http://localhost:8080/api/users/1
+DELETE http://localhost:8080/api/users/4
