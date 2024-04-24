@@ -57,7 +57,8 @@ class AccountControllerTest {
     mockMvc.perform(
             get("/api/users/{id}/auth", userId))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(userId))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(returnUser.getId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.loginId").value(userId))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.password").value(password))
     ;
   }
