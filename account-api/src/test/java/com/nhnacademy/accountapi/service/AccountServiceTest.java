@@ -11,8 +11,8 @@ import com.nhnacademy.accountapi.domain.Account.AuthType;
 import com.nhnacademy.accountapi.domain.Account.AccountRole;
 import com.nhnacademy.accountapi.domain.Account.AccountStatus;
 import com.nhnacademy.accountapi.domain.AccountAuth;
-import com.nhnacademy.accountapi.dto.UserModifyRequest;
-import com.nhnacademy.accountapi.dto.UserRegisterRequest;
+import com.nhnacademy.accountapi.dto.AccountModifyRequest;
+import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
 import com.nhnacademy.accountapi.repository.AccountAuthRepository;
 import com.nhnacademy.accountapi.repository.AccountRepository;
 import java.util.Optional;
@@ -92,7 +92,7 @@ class AccountServiceTest {
     Mockito.when(accountRepository.save(any())).thenReturn(account);
     Mockito.when(accountAuthRepository.save(any())).thenReturn(accountAuth);
 
-    accountService.createAccount(new UserRegisterRequest(
+    accountService.createAccount(new AccountRegisterRequest(
         "userId",
         "password",
         "name",
@@ -129,7 +129,7 @@ class AccountServiceTest {
     Mockito.when(accountRepository.save(any())).thenReturn(account);
     Mockito.when(accountAuthRepository.save(any())).thenReturn(accountAuth);
 
-    UserModifyRequest modifyRequest = new UserModifyRequest(
+    AccountModifyRequest modifyRequest = new AccountModifyRequest(
         "update password",
         AccountStatus.DEACTIVATED,
         AccountRole.USER

@@ -4,9 +4,11 @@ import com.nhnacademy.accountapi.domain.Account;
 import com.nhnacademy.accountapi.domain.Account.AuthType;
 import com.nhnacademy.accountapi.domain.Account.AccountStatus;
 import com.nhnacademy.accountapi.domain.AccountAuth;
-import com.nhnacademy.accountapi.dto.UserModifyRequest;
-import com.nhnacademy.accountapi.dto.UserRegisterRequest;
+import com.nhnacademy.accountapi.dto.AccountAuthResponse;
+import com.nhnacademy.accountapi.dto.AccountModifyRequest;
+import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
 import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
+import com.nhnacademy.accountapi.exception.AccountDeactivatedException;
 import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import com.nhnacademy.accountapi.repository.AccountAuthRepository;
 import com.nhnacademy.accountapi.repository.AccountRepository;
@@ -24,12 +26,19 @@ public class AccountServiceImpl implements AccountService {
   private final BCryptPasswordEncoder passwordEncoder;
 
   @Override
-  public AccountAuth getAccountAuth(String userId) {
+  public AccountAuthResponse getAccountAuth(String userId) {
+
     AccountAuth accountAuth = accountAuthRepository.findByLoginId(userId);
     if (accountAuth == null) {
       throw new AccountNotFoundException(userId);
     }
-    return accountAuth;
+
+    Account account = accountRepository.findById(accountAuth.getId()).orElseThrow(() -> new AccountNotFoundException(accountAuth.getId()));
+    if (account.getStatus().equals(AccountStatus.DEACTIVATED)) {
+      throw new AccountDeactivatedException(userId);
+    }
+
+    return new AccountAuthResponse(account, accountAuth);
   }
 
   /***
@@ -44,22 +53,22 @@ public class AccountServiceImpl implements AccountService {
 
   /***
    * DB에 유저 정보 추가
-   * @param userRegisterRequest - id, password, status, role
+   * @param accountRegisterRequest - id, password, status, role
    */
   @Override
-  public void createAccount(UserRegisterRequest userRegisterRequest) {
-    if (accountAuthRepository.existsByLoginId(userRegisterRequest.getUserId())) {
-      throw new AccountAlreadyExistException(userRegisterRequest.getUserId());
+  public void createAccount(AccountRegisterRequest accountRegisterRequest) {
+    if (accountAuthRepository.existsByLoginId(accountRegisterRequest.getUserId())) {
+      throw new AccountAlreadyExistException(accountRegisterRequest.getUserId());
     }
     Account account = Account.builder()
         .authType(AuthType.DIRECT)
-        .name(userRegisterRequest.getName())
-        .email(userRegisterRequest.getEmail())
+        .name(accountRegisterRequest.getName())
+        .email(accountRegisterRequest.getEmail())
         .build();
     account = accountRepository.save(account);
-    String encodingPassword = passwordEncoder.encode(userRegisterRequest.getPassword());
+    String encodingPassword = passwordEncoder.encode(accountRegisterRequest.getPassword());
     accountAuthRepository.save(
-        new AccountAuth(account.getId(), userRegisterRequest.getUserId(), encodingPassword)
+        new AccountAuth(account.getId(), accountRegisterRequest.getUserId(), encodingPassword)
     );
   }
 
@@ -69,7 +78,7 @@ public class AccountServiceImpl implements AccountService {
    * @param user - 수정할 정보를 담은 DTO : password, status, role
    */
   @Override
-  public void updateAccount(Long id, UserModifyRequest user) {
+  public void updateAccount(Long id, AccountModifyRequest user) {
     Account target = accountRepository.findById(id)
         .orElseThrow(() -> new AccountNotFoundException(id));
 

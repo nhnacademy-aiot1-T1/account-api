@@ -14,6 +14,7 @@ import com.nhnacademy.accountapi.domain.Account.AuthType;
 import com.nhnacademy.accountapi.domain.Account.AccountRole;
 import com.nhnacademy.accountapi.domain.Account.AccountStatus;
 import com.nhnacademy.accountapi.domain.AccountAuth;
+import com.nhnacademy.accountapi.dto.AccountAuthResponse;
 import com.nhnacademy.accountapi.service.AccountService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,16 +51,21 @@ class AccountControllerTest {
     String userId = "userId";
     String password = "encoding password";
 
-    AccountAuth returnUser = new AccountAuth(1L, userId, password);
+    Account returnAccount = new Account(1L, "name", "010-1234-1342", "email@eamil", AuthType.DIRECT, AccountStatus.ACTIVE, AccountRole.USER);
+    AccountAuth returnAccountAuth = new AccountAuth(1L, userId, password);
 
-    when(accountService.getAccountAuth(userId)).thenReturn(returnUser);
+    when(accountService.getAccountAuth(userId)).thenReturn(new AccountAuthResponse(returnAccount, returnAccountAuth));
 
     mockMvc.perform(
             get("/api/users/{id}/auth", userId))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(returnUser.getId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(returnAccount.getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.loginId").value(userId))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.password").value(password))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value(returnAccount.getName()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value(returnAccount.getEmail()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.authType").value(returnAccount.getAuthType().toString()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value(returnAccount.getRole().toString()))
     ;
   }
 

@@ -3,10 +3,10 @@ package com.nhnacademy.accountapi.exception;
 public class AccountNotFoundException extends RuntimeException {
 
   public AccountNotFoundException(String id) {
-    super(String.format("[%s] not found !", id));
+    super("유효하지 않은 id 입니다 (Login ID NOT FOUND) : "+ id);
   }
 
   public AccountNotFoundException(Long id) {
-    super(String.format("pk-[%s] not found !", id));
+    super("유효하지 않은 id 입니다 (PK ID NOT FOUND) : "+ id);
   }
 }

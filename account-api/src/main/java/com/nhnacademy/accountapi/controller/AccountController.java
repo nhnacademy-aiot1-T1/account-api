@@ -2,11 +2,10 @@
 package com.nhnacademy.accountapi.controller;
 
 import com.nhnacademy.accountapi.domain.Account;
-import com.nhnacademy.accountapi.domain.AccountAuth;
 import com.nhnacademy.accountapi.dto.CommonResponse;
-import com.nhnacademy.accountapi.dto.UserModifyRequest;
-import com.nhnacademy.accountapi.dto.UserRegisterRequest;
-import com.nhnacademy.accountapi.dto.UserResponse;
+import com.nhnacademy.accountapi.dto.AccountModifyRequest;
+import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
+import com.nhnacademy.accountapi.dto.AccountAuthResponse;
 import com.nhnacademy.accountapi.service.AccountService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -45,9 +44,9 @@ public class AccountController {
    * @return id, password 를 담은 DTO
    */
   @GetMapping("/{userId}/auth")
-  public ResponseEntity<CommonResponse<AccountAuth>> getAccountAuth(@PathVariable String userId) {
-    AccountAuth account = accountService.getAccountAuth(userId);
-    return ResponseEntity.ok(CommonResponse.success(account, "pk id, login id, password info"));
+  public ResponseEntity<CommonResponse<AccountAuthResponse>> getAccountAuth(@PathVariable String userId) {
+    AccountAuthResponse account = accountService.getAccountAuth(userId);
+    return ResponseEntity.ok(CommonResponse.success(account, "account info for auth"));
   }
 
   /***
@@ -63,8 +62,8 @@ public class AccountController {
 
 
   @PostMapping
-  public ResponseEntity<CommonResponse<UserResponse>> registerUser(
-      @RequestBody UserRegisterRequest user) {
+  public ResponseEntity<CommonResponse<AccountAuthResponse>> registerUser(
+      @RequestBody AccountRegisterRequest user) {
     accountService.createAccount(user);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(CommonResponse.success(null, "Welcome " + user.getName() + " !"));
@@ -77,8 +76,8 @@ public class AccountController {
    * @return 수정된 User 정보 (id, status, role)
    */
   @PutMapping("/{id}")
-  public ResponseEntity<CommonResponse<UserResponse>> modifyUser(@PathVariable Long id,
-      @RequestBody UserModifyRequest user) {
+  public ResponseEntity<CommonResponse<AccountAuthResponse>> modifyUser(@PathVariable Long id,
+      @RequestBody AccountModifyRequest user) {
     accountService.updateAccount(id, user);
 
     return ResponseEntity.ok(CommonResponse.success(null, "pk-"+id + " modified"));

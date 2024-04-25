@@ -7,12 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /***
- * User 정보를 수정할때 사용되는 DTO
+ * Account 정보를 수정할때 사용되는 DTO
  */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserModifyRequest {
+public class AccountModifyRequest {
   private String password;
   private AccountStatus status;
   private AccountRole role;

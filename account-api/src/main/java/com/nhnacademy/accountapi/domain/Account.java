@@ -39,6 +39,9 @@ public class Account {
   private String name;
 
   @Column
+  private String phone;
+
+  @Column
   private String email;
 
   @Column(name = "auth_type")
