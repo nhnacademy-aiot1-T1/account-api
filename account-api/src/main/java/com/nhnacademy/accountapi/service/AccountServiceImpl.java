@@ -74,25 +74,39 @@ public class AccountServiceImpl implements AccountService {
 
   /***
    * 유저 정보 수정
+   * DTO에 NULL이 아닌 정보만 수정
+   *
+   * password 이외의 정보는 account 테이블에 반영
+   * password는 암호화하여 account_auth 테이블에 반영
+   *
    * @param id - 수정할 대상의 고유 ID
-   * @param user - 수정할 정보를 담은 DTO : password, status, role
+   * @param account - 수정할 정보를 담은 DTO : name, password, phone, email, status, role
    */
   @Override
-  public void updateAccount(Long id, AccountModifyRequest user) {
+  public void updateAccount(Long id, AccountModifyRequest account) {
     Account target = accountRepository.findById(id)
         .orElseThrow(() -> new AccountNotFoundException(id));
 
-    if (user.getStatus() != null) {
-      target.setStatus(user.getStatus());
+    if (account.getName() != null) {
+      target.setName(account.getName());
     }
-    if (user.getRole() != null) {
-      target.setRole(target.getRole());
+    if (account.getPhone() != null) {
+      target.setPhone(account.getPhone());
+    }
+    if (account.getEmail() != null) {
+      target.setEmail(account.getEmail());
+    }
+    if (account.getStatus() != null) {
+      target.setStatus(account.getStatus());
+    }
+    if (account.getRole() != null) {
+      target.setRole(account.getRole());
     }
     accountRepository.save(target);
 
-    if (user.getPassword() != null) {
+    if (account.getPassword() != null) {
       AccountAuth targetAuth = accountAuthRepository.findById(id).orElseThrow(()-> new AccountNotFoundException(id));
-      targetAuth.setPassword(passwordEncoder.encode(user.getPassword()));
+      targetAuth.setPassword(passwordEncoder.encode(account.getPassword()));
 
       accountAuthRepository.save(targetAuth);
     }

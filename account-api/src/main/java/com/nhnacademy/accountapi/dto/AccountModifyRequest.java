@@ -13,7 +13,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountModifyRequest {
+  private String name;
   private String password;
+  private String phone;
+  private String email;
   private AccountStatus status;
   private AccountRole role;
 

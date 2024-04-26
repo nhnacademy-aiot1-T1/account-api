@@ -130,7 +130,10 @@ class AccountServiceTest {
     Mockito.when(accountAuthRepository.save(any())).thenReturn(accountAuth);
 
     AccountModifyRequest modifyRequest = new AccountModifyRequest(
+        "update name",
         "update password",
+        "010-1111-1111",
+        "email@email.com",
         AccountStatus.DEACTIVATED,
         AccountRole.USER
     );

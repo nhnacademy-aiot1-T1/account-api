@@ -56,7 +56,7 @@ public class AccountController {
    */
   @GetMapping("/{id}/info")
   public ResponseEntity<CommonResponse<Account>> getAccountInfo(@PathVariable Long id) {
-    Account data = accountService.getAccountInfo(id);  // FIXME : 조회가 필요한 정보에 따라 DTO 필드 변경해야함
+    Account data = accountService.getAccountInfo(id);
     return ResponseEntity.ok(CommonResponse.success(data, "User Info"));
   }
 
@@ -72,13 +72,13 @@ public class AccountController {
   /***
    * DB에 저장된 특정 유저의 정보를 수정하는 메서드
    * @param id - 수정할 유저 ID
-   * @param user - 수정된 정보를 담은 DTO (password, status, role)
+   * @param account - 수정된 정보를 담은 DTO (password, status, role)
    * @return 수정된 User 정보 (id, status, role)
    */
   @PutMapping("/{id}")
   public ResponseEntity<CommonResponse<AccountAuthResponse>> modifyUser(@PathVariable Long id,
-      @RequestBody AccountModifyRequest user) {
-    accountService.updateAccount(id, user);
+      @RequestBody AccountModifyRequest account) {
+    accountService.updateAccount(id, account);
 
     return ResponseEntity.ok(CommonResponse.success(null, "pk-"+id + " modified"));
   }
