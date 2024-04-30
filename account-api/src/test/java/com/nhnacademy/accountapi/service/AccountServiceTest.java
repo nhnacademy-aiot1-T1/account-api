@@ -2,18 +2,19 @@ package com.nhnacademy.accountapi.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.nhnacademy.accountapi.domain.Account;
-import com.nhnacademy.accountapi.domain.Account.AuthType;
-import com.nhnacademy.accountapi.domain.Account.AccountRole;
-import com.nhnacademy.accountapi.domain.Account.AccountStatus;
-import com.nhnacademy.accountapi.domain.AccountAuth;
+import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
+import com.nhnacademy.accountapi.entity.Account;
+import com.nhnacademy.accountapi.entity.AccountAuth;
 import com.nhnacademy.accountapi.dto.AccountModifyRequest;
 import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
+import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
+import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
+import com.nhnacademy.accountapi.entity.enumfield.AuthType;
 import com.nhnacademy.accountapi.repository.AccountAuthRepository;
+import com.nhnacademy.accountapi.repository.AccountOAuthRepository;
 import com.nhnacademy.accountapi.repository.AccountRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,9 @@ class AccountServiceTest {
 
   @MockBean
   AccountAuthRepository accountAuthRepository;
+
+  @MockBean
+  AccountOAuthRepository accountOauthRepository;
 
   @MockBean
   BCryptPasswordEncoder passwordEncoder;
@@ -59,19 +63,17 @@ class AccountServiceTest {
     Mockito.when(accountRepository.findById(any())).thenReturn(Optional.ofNullable(account));
 
     assert account != null;
-    Account result = accountService.getAccountInfo(account.getId());
+    AccountInfoResponse result = accountService.getAccountInfo(account.getId());
 
     assertThat(result.getId()).isEqualTo(account.getId());
     assertThat(result.getAuthType()).isEqualTo(account.getAuthType());
     assertThat(result.getName()).isEqualTo(account.getName());
-    assertThat(result.getEmail()).isEqualTo(account.getEmail());
-    assertThat(result.getStatus()).isEqualTo(account.getStatus());
     assertThat(result.getRole()).isEqualTo(account.getRole());
   }
 
   @Test
   @DisplayName("회원가입")
-  void createAccount() {
+  void registerAccount() {
     Account account = Account.builder()
         .id(1L)
         .authType(AuthType.DIRECT)
@@ -84,7 +86,8 @@ class AccountServiceTest {
     AccountAuth accountAuth = new AccountAuth(
         account.getId(),
         "userId",
-        "user password"
+        "user password",
+        account
     );
 
     Mockito.when(accountRepository.existsById(any())).thenReturn(false);
@@ -92,7 +95,7 @@ class AccountServiceTest {
     Mockito.when(accountRepository.save(any())).thenReturn(account);
     Mockito.when(accountAuthRepository.save(any())).thenReturn(accountAuth);
 
-    accountService.createAccount(new AccountRegisterRequest(
+    accountService.registerAccount(new AccountRegisterRequest(
         "userId",
         "password",
         "name",
@@ -120,7 +123,8 @@ class AccountServiceTest {
     AccountAuth accountAuth = new AccountAuth(
         1L,
         "userId",
-        "password"
+        "password",
+        account
     );
 
 

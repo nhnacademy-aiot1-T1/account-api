@@ -1,7 +1,7 @@
 package com.nhnacademy.accountapi.dto;
 
-import com.nhnacademy.accountapi.domain.Account.AccountRole;
-import com.nhnacademy.accountapi.domain.Account.AccountStatus;
+import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
+import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

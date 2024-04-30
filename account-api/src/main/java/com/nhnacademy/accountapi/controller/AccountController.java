@@ -1,17 +1,17 @@
 
 package com.nhnacademy.accountapi.controller;
 
-import com.nhnacademy.accountapi.domain.Account;
+import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
+import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
+import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.dto.CommonResponse;
 import com.nhnacademy.accountapi.dto.AccountModifyRequest;
 import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
-import com.nhnacademy.accountapi.dto.AccountAuthResponse;
 import com.nhnacademy.accountapi.service.AccountService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /***
@@ -26,47 +27,55 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/account/users")
 @RequiredArgsConstructor
 public class AccountController {
 
   private final AccountService accountService;
 
   @GetMapping
-  public ResponseEntity<CommonResponse<List<Account>>> getAccountList() {
+  @ResponseStatus(HttpStatus.OK)
+  public CommonResponse<List<Account>> getAccountList() {
     List<Account> accountList = accountService.getAccountList();
-    return ResponseEntity.ok(CommonResponse.success(accountList, "account list"));
+    return CommonResponse.success(accountList, "account list");
   }
 
   /***
-   * auth server에서 id, password를 체크하기 위해 보내는 유저 정보
-   * @param userId - 로그인정보를 확인할 user id
+   * auth server에서 Direct login을 할 때 id, password를 체크하기 위해 보내는 유저 정보
+   * @param loginId - 로그인정보를 확인할 Login Id
    * @return id, password 를 담은 DTO
    */
-  @GetMapping("/{userId}/auth")
-  public ResponseEntity<CommonResponse<AccountAuthResponse>> getAccountAuth(@PathVariable String userId) {
-    AccountAuthResponse account = accountService.getAccountAuth(userId);
-    return ResponseEntity.ok(CommonResponse.success(account, "account info for auth"));
+  @GetMapping("/{loginId}/credentials")
+  @ResponseStatus(HttpStatus.OK)
+  public CommonResponse<AccountCredentialsResponse> getAccountAuth(@PathVariable String loginId) {
+    AccountCredentialsResponse account = accountService.getAccountAuth(loginId);
+    return CommonResponse.success(account, "account credential info");
   }
 
   /***
    * DB에 저장된 특정 유저 정보를 조회하는 메서드
-   * @param id - 조회할 대상의 고유 ID
-   * @return 유저의 id, status, role 을 담은 DTO
+   * @param id - 조회할 대상의 고유 id
+   * @return 유저의 id, name, auth type,
    */
-  @GetMapping("/{id}/info")
-  public ResponseEntity<CommonResponse<Account>> getAccountInfo(@PathVariable Long id) {
-    Account data = accountService.getAccountInfo(id);
-    return ResponseEntity.ok(CommonResponse.success(data, "User Info"));
+  @GetMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public CommonResponse<AccountInfoResponse> getAccountInfo(@PathVariable Long id) {
+    AccountInfoResponse data = accountService.getAccountInfo(id);
+    return CommonResponse.success(data, "account Info");
   }
 
 
+  /**
+   * 계정 등록 메서드
+   * @param user - db에 저장할 계정 정보 (userId, password, name, email)
+   * @return
+   */
   @PostMapping
-  public ResponseEntity<CommonResponse<AccountAuthResponse>> registerUser(
+  @ResponseStatus(HttpStatus.CREATED)
+  public CommonResponse<AccountInfoResponse> registerUser(
       @RequestBody AccountRegisterRequest user) {
-    accountService.createAccount(user);
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(CommonResponse.success(null, "Welcome " + user.getName() + " !"));
+    accountService.registerAccount(user);
+    return CommonResponse.success(null, "회원 등록이 정상적으로 처리되었습니다 : "+user.getName());
   }
 
   /***
@@ -76,11 +85,12 @@ public class AccountController {
    * @return 수정된 User 정보 (id, status, role)
    */
   @PutMapping("/{id}")
-  public ResponseEntity<CommonResponse<AccountAuthResponse>> modifyUser(@PathVariable Long id,
+  @ResponseStatus(HttpStatus.OK)
+  public CommonResponse<AccountInfoResponse> modifyAccount(@PathVariable Long id,
       @RequestBody AccountModifyRequest account) {
     accountService.updateAccount(id, account);
 
-    return ResponseEntity.ok(CommonResponse.success(null, "pk-"+id + " modified"));
+    return CommonResponse.success(null, "pk-"+id + " modified");
   }
 
   /***
@@ -89,10 +99,11 @@ public class AccountController {
    * @return 단순 성공 메세지 반환
    */
   @DeleteMapping("/{id}")
-  public ResponseEntity<CommonResponse<String>> deleteUser(@PathVariable Long id) {
+  @ResponseStatus(HttpStatus.OK)
+  public CommonResponse<String> deleteAccount(@PathVariable Long id) {
     accountService.deleteAccount(id);
-    return ResponseEntity.ok(
-        CommonResponse.success(null, String.format("[%s] deleted successfully !", id)));
+    return
+        CommonResponse.success(null, String.format("[%s] deleted successfully !", id));
   }
 
 }

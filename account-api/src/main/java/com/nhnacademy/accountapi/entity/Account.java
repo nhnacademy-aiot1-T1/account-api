@@ -1,6 +1,10 @@
-package com.nhnacademy.accountapi.domain;
+package com.nhnacademy.accountapi.entity;
 
 
+import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
+import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
+import com.nhnacademy.accountapi.entity.enumfield.AuthType;
+import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,7 +18,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -24,7 +27,6 @@ import org.hibernate.annotations.DynamicInsert;
 @Entity
 @Table(name = "account")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -58,16 +60,33 @@ public class Account {
   @Enumerated(EnumType.STRING)
   private AccountRole role;
 
-  public static enum AccountRole {
-    USER, ADMIN, NONE
+  public void changeName(String newName) {
+    this.name = newName;
   }
 
-  public static enum AccountStatus {
-    ACTIVE, DEACTIVATED
+  public void changePhone(String newPhone) {
+    this.phone = newPhone;
   }
 
-  public static enum AuthType {
-    DIRECT, PAYCO
+  public void changeEmail(String newEmail) {
+    this.email = newEmail;
+  }
+
+  public void changeStatus(AccountStatus status) {
+    this.status = status;
+  }
+
+  public void changeRole(AccountRole role) {
+    this.role = role;
+  }
+
+  public AccountInfoResponse toAccountInfoResponse() {
+    return AccountInfoResponse.builder()
+        .id(id)
+        .name(name)
+        .authType(authType)
+        .role(role)
+        .build();
   }
 
 }

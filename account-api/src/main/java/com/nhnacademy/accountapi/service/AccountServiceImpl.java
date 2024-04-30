@@ -1,14 +1,14 @@
 package com.nhnacademy.accountapi.service;
 
-import com.nhnacademy.accountapi.domain.Account;
-import com.nhnacademy.accountapi.domain.Account.AuthType;
-import com.nhnacademy.accountapi.domain.Account.AccountStatus;
-import com.nhnacademy.accountapi.domain.AccountAuth;
-import com.nhnacademy.accountapi.dto.AccountAuthResponse;
+import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
+import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
+import com.nhnacademy.accountapi.entity.Account;
+import com.nhnacademy.accountapi.entity.AccountAuth;
 import com.nhnacademy.accountapi.dto.AccountModifyRequest;
 import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
+import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
+import com.nhnacademy.accountapi.entity.enumfield.AuthType;
 import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
-import com.nhnacademy.accountapi.exception.AccountDeactivatedException;
 import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import com.nhnacademy.accountapi.repository.AccountAuthRepository;
 import com.nhnacademy.accountapi.repository.AccountRepository;
@@ -16,6 +16,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,38 +26,37 @@ public class AccountServiceImpl implements AccountService {
   private final AccountAuthRepository accountAuthRepository;
   private final BCryptPasswordEncoder passwordEncoder;
 
+
+  /**
+   * 직접 로그인에 대한 유저의 로그인 정보를 보내주는 메서드
+   *
+   * @param loginId 로그인시 유저가 입력한 id
+   * @return pk-id, loginId, password
+   */
   @Override
-  public AccountAuthResponse getAccountAuth(String userId) {
-
-    AccountAuth accountAuth = accountAuthRepository.findByLoginId(userId);
-    if (accountAuth == null) {
-      throw new AccountNotFoundException(userId);
-    }
-
-    Account account = accountRepository.findById(accountAuth.getId()).orElseThrow(() -> new AccountNotFoundException(accountAuth.getId()));
-    if (account.getStatus().equals(AccountStatus.DEACTIVATED)) {
-      throw new AccountDeactivatedException(userId);
-    }
-
-    return new AccountAuthResponse(account, accountAuth);
+  public AccountCredentialsResponse getAccountAuth(String loginId) {
+    AccountAuth accountAuth = accountAuthRepository.findByLoginId(loginId);
+    return accountAuth.toAccountCredentialsResponse();
   }
 
   /***
    * DB에 저장된 유저 정보 조회
    * @param id 조회할 대상의 고유 ID
-   * @return User - id, password, status, role
+   * @return id, name, auth type, role
    */
   @Override
-  public Account getAccountInfo(Long id) {
-    return accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException(id));
+  public AccountInfoResponse getAccountInfo(Long id) {
+    Account account = accountRepository.findById(id).orElseThrow(()-> new AccountNotFoundException(id));
+    return account.toAccountInfoResponse();
   }
 
   /***
    * DB에 유저 정보 추가
-   * @param accountRegisterRequest - id, password, status, role
+   * @param accountRegisterRequest - userId, password, name, email
    */
   @Override
-  public void createAccount(AccountRegisterRequest accountRegisterRequest) {
+  @Transactional
+  public void registerAccount(AccountRegisterRequest accountRegisterRequest) {
     if (accountAuthRepository.existsByLoginId(accountRegisterRequest.getUserId())) {
       throw new AccountAlreadyExistException(accountRegisterRequest.getUserId());
     }
@@ -67,8 +67,14 @@ public class AccountServiceImpl implements AccountService {
         .build();
     account = accountRepository.save(account);
     String encodingPassword = passwordEncoder.encode(accountRegisterRequest.getPassword());
+
     accountAuthRepository.save(
-        new AccountAuth(account.getId(), accountRegisterRequest.getUserId(), encodingPassword)
+        AccountAuth.builder()
+            .id(account.getId())
+            .loginId(accountRegisterRequest.getUserId())
+            .password(encodingPassword)
+            .account(account)
+            .build()
     );
   }
 
@@ -88,25 +94,26 @@ public class AccountServiceImpl implements AccountService {
         .orElseThrow(() -> new AccountNotFoundException(id));
 
     if (account.getName() != null) {
-      target.setName(account.getName());
+      target.changeEmail(account.getName());
     }
     if (account.getPhone() != null) {
-      target.setPhone(account.getPhone());
+      target.changePhone(account.getPhone());
     }
     if (account.getEmail() != null) {
-      target.setEmail(account.getEmail());
+      target.changeEmail(account.getEmail());
     }
     if (account.getStatus() != null) {
-      target.setStatus(account.getStatus());
+      target.changeStatus(account.getStatus());
     }
     if (account.getRole() != null) {
-      target.setRole(account.getRole());
+      target.changeRole(account.getRole());
     }
     accountRepository.save(target);
 
     if (account.getPassword() != null) {
-      AccountAuth targetAuth = accountAuthRepository.findById(id).orElseThrow(()-> new AccountNotFoundException(id));
-      targetAuth.setPassword(passwordEncoder.encode(account.getPassword()));
+      AccountAuth targetAuth = accountAuthRepository.findById(id)
+          .orElseThrow(() -> new AccountNotFoundException(id));
+      targetAuth.changePassword(passwordEncoder.encode(account.getPassword()));
 
       accountAuthRepository.save(targetAuth);
     }
@@ -118,8 +125,9 @@ public class AccountServiceImpl implements AccountService {
    */
   @Override
   public void deleteAccount(Long id) {
-    Account account = accountRepository.findById(id).orElseThrow(()->new AccountNotFoundException(id));
-    account.setStatus(AccountStatus.DEACTIVATED);
+    Account account = accountRepository.findById(id)
+        .orElseThrow(() -> new AccountNotFoundException(id));
+    account.changeStatus(AccountStatus.DEACTIVATED);
 
     accountRepository.save(account);
   }
