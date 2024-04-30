@@ -1,5 +1,5 @@
 ### 계정 등록
-POST http://localhost:8080/api/users
+POST http://localhost:8080/api/account/users
 Content-Type: application/json
 
 {
@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ### 계정 등록
-POST http://localhost:8080/api/users
+POST http://localhost:8080/api/account/users
 Content-Type: application/json
 
 {
@@ -20,23 +20,37 @@ Content-Type: application/json
   "email": "admin@admi"
 }
 
-### 전체 계정 조회
-GET http://localhost:8080/api/users
-
-### 계정 조회
-GET http://localhost:8080/api/users/2/info
-Content-Type: application/json
-
-### 아이디 비밀번호 조회
-GET http://localhost:8080/api/users/admin/auth
-
-### 계정 수정
-PUT http://localhost:8080/api/users/3
+### 계정 등록
+POST http://localhost:8080/api/account/oauth/users
 Content-Type: application/json
 
 {
-  "role": "USER"
+  "oauthId": "test-oauthId",
+  "type": "payco",
+  "name": "pc",
+  "email": "email@sdas"
+}
+
+### 전체 계정 조회
+GET http://localhost:8080/api/account/users
+
+### 계정 조회
+GET http://localhost:8080/api/account/users/17/info?type=direct
+Content-Type: application/json
+
+### 로그인 아이디 비밀번호 조회
+GET http://localhost:8080/api/account/users/admin/credentials
+
+### OAuth 로그인 아이디 비밀번호 조회
+GET http://localhost:8080/api/account/oauth/users/test-oauthId
+
+### 계정 수정
+PUT http://localhost:8080/api/account/users/2
+Content-Type: application/json
+
+{
+  "status": "ACTIVE"
 }
 
 ### 계정 삭제
-DELETE http://localhost:8080/api/users/4
+DELETE http://localhost:8080/api/account/users/2
