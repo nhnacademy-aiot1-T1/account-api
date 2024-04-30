@@ -1,28 +1,21 @@
-package com.nhnacademy.accountapi.service.dto;
+package com.nhnacademy.accountapi.dto;
 
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-/**
- *
- */
 @Getter
 @ToString
-public class AccountInfoResponse {
+public class OAuthResponse {
   private final Long id;
   private final String name;
-  private final String phone;
-  private final String email;
   private final AccountRole role;
 
   @Builder
-  public AccountInfoResponse(Long id, String name, String phone, String email, AccountRole role) {
+  public OAuthResponse(Long id, String name, AccountRole role) {
     this.id = id;
     this.name = name;
-    this.phone = phone;
-    this.email = email;
     this.role = role;
   }
 }

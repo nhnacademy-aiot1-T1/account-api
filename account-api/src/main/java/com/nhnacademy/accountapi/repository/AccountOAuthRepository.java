@@ -12,4 +12,5 @@ public interface AccountOAuthRepository extends JpaRepository<AccountOAuth, Long
   Account findByOauthId(@Param("oauthId") String oauthId);
 
   boolean existsByOauthId(String oauthId);
+
 }

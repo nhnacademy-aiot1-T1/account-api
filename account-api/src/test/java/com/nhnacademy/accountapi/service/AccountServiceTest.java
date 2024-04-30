@@ -66,7 +66,6 @@ class AccountServiceTest {
     AccountInfoResponse result = accountService.getAccountInfo(account.getId());
 
     assertThat(result.getId()).isEqualTo(account.getId());
-    assertThat(result.getAuthType()).isEqualTo(account.getAuthType());
     assertThat(result.getName()).isEqualTo(account.getName());
     assertThat(result.getRole()).isEqualTo(account.getRole());
   }

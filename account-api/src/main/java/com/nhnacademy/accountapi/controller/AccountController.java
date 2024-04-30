@@ -3,7 +3,6 @@ package com.nhnacademy.accountapi.controller;
 
 import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
 import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
-import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.dto.CommonResponse;
 import com.nhnacademy.accountapi.dto.AccountModifyRequest;
 import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
@@ -35,8 +34,8 @@ public class AccountController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public CommonResponse<List<Account>> getAccountList() {
-    List<Account> accountList = accountService.getAccountList();
+  public CommonResponse<List<AccountInfoResponse>> getAccountList() {
+    List<AccountInfoResponse> accountList = accountService.getAccountList();
     return CommonResponse.success(accountList, "account list");
   }
 
@@ -72,7 +71,7 @@ public class AccountController {
    */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public CommonResponse<AccountInfoResponse> registerUser(
+  public CommonResponse registerUser(
       @RequestBody AccountRegisterRequest user) {
     accountService.registerAccount(user);
     return CommonResponse.success(null, "회원 등록이 정상적으로 처리되었습니다 : "+user.getName());
@@ -86,7 +85,7 @@ public class AccountController {
    */
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public CommonResponse<AccountInfoResponse> modifyAccount(@PathVariable Long id,
+  public CommonResponse modifyAccount(@PathVariable Long id,
       @RequestBody AccountModifyRequest account) {
     accountService.updateAccount(id, account);
 
@@ -100,7 +99,7 @@ public class AccountController {
    */
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public CommonResponse<String> deleteAccount(@PathVariable Long id) {
+  public CommonResponse deleteAccount(@PathVariable Long id) {
     accountService.deleteAccount(id);
     return
         CommonResponse.success(null, String.format("[%s] deleted successfully !", id));

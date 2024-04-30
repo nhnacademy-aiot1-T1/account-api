@@ -1,6 +1,7 @@
 package com.nhnacademy.accountapi.entity;
 
 
+import com.nhnacademy.accountapi.dto.OAuthResponse;
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
 import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
 import com.nhnacademy.accountapi.entity.enumfield.AuthType;
@@ -22,7 +23,9 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 /***
- * DB에서 관리되는 User Entity
+ * DB에서 관리되는 account Entity
+ *
+ * 직접가입, OAuth가입 계정의 공통 정보를 관리하는 Entity 입니다
  */
 @Entity
 @Table(name = "account")
@@ -84,9 +87,17 @@ public class Account {
     return AccountInfoResponse.builder()
         .id(id)
         .name(name)
-        .authType(authType)
+        .phone(phone)
+        .email(email)
         .role(role)
         .build();
   }
 
+  public OAuthResponse toOAuthResponse() {
+    return OAuthResponse.builder()
+        .id(id)
+        .name(name)
+        .role(role)
+        .build();
+  }
 }

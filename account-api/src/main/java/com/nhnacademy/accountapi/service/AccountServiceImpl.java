@@ -13,6 +13,7 @@ import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import com.nhnacademy.accountapi.repository.AccountAuthRepository;
 import com.nhnacademy.accountapi.repository.AccountRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,9 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public AccountCredentialsResponse getAccountAuth(String loginId) {
     AccountAuth accountAuth = accountAuthRepository.findByLoginId(loginId);
+    if (accountAuth == null) {
+      throw new AccountNotFoundException(loginId);
+    }
     return accountAuth.toAccountCredentialsResponse();
   }
 
@@ -133,7 +137,8 @@ public class AccountServiceImpl implements AccountService {
   }
 
   @Override
-  public List<Account> getAccountList() {
-    return accountRepository.findAll();
+  public List<AccountInfoResponse> getAccountList() {
+    return accountRepository.findAll().stream().map(
+        Account::toAccountInfoResponse).collect(Collectors.toList());
   }
 }

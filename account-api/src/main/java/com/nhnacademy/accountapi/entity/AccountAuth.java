@@ -13,6 +13,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 홈페이지에서 직접가입한 계정의 로그인 정보를 관리하는 Entity입니다
+ */
 @Entity
 @Table(name = "account_auth")
 @Getter

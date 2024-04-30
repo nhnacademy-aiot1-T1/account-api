@@ -11,6 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+/**
+ * OAuth로 가입한 계정의 OAuth에서 제공해주는 id를 관리하는 Entity 입니다
+ */
 @Entity
 @Table(name = "account_oauth")
 @NoArgsConstructor

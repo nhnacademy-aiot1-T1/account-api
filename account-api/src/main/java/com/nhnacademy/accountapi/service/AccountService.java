@@ -2,7 +2,6 @@ package com.nhnacademy.accountapi.service;
 
 import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
 import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
-import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.dto.AccountModifyRequest;
 import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
 import java.util.List;
@@ -19,5 +18,5 @@ public interface AccountService {
 
   void deleteAccount(Long id);
 
-  List<Account> getAccountList();
+  List<AccountInfoResponse> getAccountList();
 }

@@ -1,6 +1,6 @@
 package com.nhnacademy.accountapi.controller;
 
-import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
+import com.nhnacademy.accountapi.dto.OAuthResponse;
 import com.nhnacademy.accountapi.dto.CommonResponse;
 import com.nhnacademy.accountapi.dto.OAuthRegisterRequest;
 import com.nhnacademy.accountapi.service.OAuthService;
@@ -13,6 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * OAuth 관련 기능을 제공하는 Controller 입니다
+ *
+ * - 기능
+ * getAccountInfo : 연동된 OAuth 계정의 회원 정보 조회 기능
+ * registerAccount : OAuth 최초 연동을 위한 기능
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/account/oauth/users")
@@ -21,17 +28,17 @@ public class OAuthController {
   private final OAuthService oAuthService;
 
   @GetMapping("/{oauthId}")
-  public ResponseEntity<CommonResponse<AccountInfoResponse>> getAccountInfo(
+  public ResponseEntity<CommonResponse<OAuthResponse>> getAccountInfo(
       @PathVariable String oauthId) {
-    AccountInfoResponse data = oAuthService.getAccountInfo(oauthId);
+    OAuthResponse data = oAuthService.getAccountInfo(oauthId);
     return ResponseEntity.ok().body(CommonResponse.success(data, "account info - " + oauthId));
   }
 
   @PostMapping
-  public ResponseEntity<CommonResponse<AccountInfoResponse>> registerAccount(
+  public ResponseEntity<CommonResponse<OAuthResponse>> registerAccount(
       @RequestBody OAuthRegisterRequest oAuthRegisterRequest) {
-    oAuthService.registerAccount(oAuthRegisterRequest);
-    return ResponseEntity.ok().body(CommonResponse.success(null, "회원 등록이 정상적으로 처리되었습니다 : "+oAuthRegisterRequest.getOauthId()));
+    OAuthResponse data = oAuthService.registerAccount(oAuthRegisterRequest);
+    return ResponseEntity.ok().body(CommonResponse.success(data, "회원 등록이 정상적으로 처리되었습니다 : "+oAuthRegisterRequest.getOauthId()));
   }
 
 }

@@ -5,8 +5,8 @@ import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
 import com.nhnacademy.accountapi.exception.AccountDeactivatedException;
 import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -21,11 +21,11 @@ public class GlobalExceptionHandler {
    * @return error에 대한 내용을 응답으로 보냅니다
    */
   @ExceptionHandler(AccountNotFoundException.class)
-  public ResponseEntity<CommonResponse<String>> handleAccountNotFoundException(
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public CommonResponse handleAccountNotFoundException(
       AccountNotFoundException e) {
-    CommonResponse<String> error = CommonResponse.fail(e.getMessage());
 
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    return CommonResponse.fail(null, e.getMessage());
   }
 
   /**
@@ -34,10 +34,9 @@ public class GlobalExceptionHandler {
    * @return error에 대한 내용을 응답으로 보냅니다
    */
   @ExceptionHandler(AccountDeactivatedException.class)
-  public ResponseEntity<CommonResponse<String>> handleAccountDeactivatedException(AccountDeactivatedException e) {
-    CommonResponse<String> error = CommonResponse.fail(e.getMessage());
-
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public CommonResponse handleAccountDeactivatedException(AccountDeactivatedException e) {
+    return CommonResponse.fail(null, e.getMessage());
   }
 
   /**
@@ -46,11 +45,10 @@ public class GlobalExceptionHandler {
    * @return  error에 대한 내용을 응답으로 보냅니다
    */
   @ExceptionHandler(AccountAlreadyExistException.class)
-  public ResponseEntity<CommonResponse<String>> handleAccountAlreadyExistException(
+  @ResponseStatus(HttpStatus.CONFLICT)
+  public CommonResponse handleAccountAlreadyExistException(
       AccountAlreadyExistException e) {
-    CommonResponse<String> error = CommonResponse.fail(e.getMessage());
-
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    return CommonResponse.fail(null, e.getMessage());
   }
 
 }

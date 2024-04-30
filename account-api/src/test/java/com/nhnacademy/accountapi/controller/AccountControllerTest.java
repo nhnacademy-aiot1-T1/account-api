@@ -87,7 +87,6 @@ class AccountControllerTest {
         AccountInfoResponse.builder()
             .id(account.getId())
             .name(account.getName())
-            .authType(account.getAuthType())
             .role(account.getRole())
         .build());
 
@@ -117,7 +116,6 @@ class AccountControllerTest {
         AccountInfoResponse.builder()
         .id(account.getId())
         .name(account.getName())
-        .authType(account.getAuthType())
         .role(account.getRole())
         .build());
 
