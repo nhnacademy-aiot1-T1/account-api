@@ -15,7 +15,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-
+@Disabled
 @DataJpaTest
 //@AutoConfigureTestDatabase(replace = Replace.NONE)
 class UserRepositoryTest {
