@@ -1,0 +1,54 @@
+### 계정 등록
+POST http://localhost:8080/api/account/users
+Content-Type: application/json
+
+{
+  "userId": "account",
+  "password": "1234",
+  "name": "user1",
+  "email": "account@account"
+}
+### 계정 등록
+POST http://localhost:8080/api/account/users
+Content-Type: application/json
+{
+  "userId": "admin",
+  "password": "1234",
+  "name": "admin",
+  "email": "admin@admi"
+}
+### 계정 등록
+POST http://localhost:8080/api/account/oauth/users
+Content-Type: application/json
+
+{
+  "oauthId": "oauthId",
+  "type": "payco",
+  "name": "opc",
+  "email": "email@sdas"
+}
+
+### 전체 계정 조회
+GET http://localhost:8080/api/account/users
+
+### 계정 조회
+GET http://localhost:8080/api/account/users/9
+Content-Type: application/json
+
+### 로그인 아이디 비밀번호 조회
+GET http://localhost:8080/api/account/users/admin/credentials
+
+### OAuth 로그인 아이디 비밀번호 조회
+GET http://localhost:8080/api/account/oauth/users/oauthId
+
+### 계정 수정
+PUT http://localhost:8080/api/account/users/9
+Content-Type: application/json
+
+{
+  "phone": "010-1122-3333",
+  "role": "ADMIN"
+}
+
+### 계정 삭제
+DELETE http://localhost:8080/api/account/users/2

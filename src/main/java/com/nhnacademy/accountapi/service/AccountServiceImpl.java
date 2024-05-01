@@ -93,6 +93,7 @@ public class AccountServiceImpl implements AccountService {
    * @param account - 수정할 정보를 담은 DTO : name, password, phone, email, status, role
    */
   @Override
+  @Transactional
   public void updateAccount(Long id, AccountModifyRequest account) {
     Account target = accountRepository.findById(id)
         .orElseThrow(() -> new AccountNotFoundException(id));
