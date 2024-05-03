@@ -1,6 +1,7 @@
 
 package com.nhnacademy.accountapi.controller;
 
+import com.nhnacademy.accountapi.dto.AccountAuthModifyRequest;
 import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
 import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
 import com.nhnacademy.accountapi.dto.CommonResponse;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/***
+/**
  * User 정보와 관련하여 기능을 제공하는 Controller
  */
 @Slf4j
@@ -39,7 +40,7 @@ public class AccountController {
     return CommonResponse.success(accountList, "account list");
   }
 
-  /***
+  /**
    * auth server에서 Direct login을 할 때 id, password를 체크하기 위해 보내는 유저 정보
    * @param loginId - 로그인정보를 확인할 Login Id
    * @return id, password 를 담은 DTO
@@ -51,7 +52,7 @@ public class AccountController {
     return CommonResponse.success(account, "account credential info");
   }
 
-  /***
+  /**
    * DB에 저장된 특정 유저 정보를 조회하는 메서드
    * @param id - 조회할 대상의 고유 id
    * @return 유저의 id, name, auth type,
@@ -67,39 +68,54 @@ public class AccountController {
   /**
    * 계정 등록 메서드
    * @param user - db에 저장할 계정 정보 (userId, password, name, email)
-   * @return
+   * @return only message
    */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public CommonResponse registerUser(
+  public <T> CommonResponse<T> registerUser(
       @RequestBody AccountRegisterRequest user) {
     accountService.registerAccount(user);
     return CommonResponse.success(null, "회원 등록이 정상적으로 처리되었습니다 : "+user.getName());
   }
 
-  /***
+  /**
    * DB에 저장된 특정 유저의 정보를 수정하는 메서드
    * @param id - 수정할 유저 ID
    * @param account - 수정된 정보를 담은 DTO (password, status, role)
-   * @return 수정된 User 정보 (id, status, role)
+   * @return only message
    */
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public CommonResponse modifyAccount(@PathVariable Long id,
+  public <T> CommonResponse<T> modifyAccountInfo(@PathVariable Long id,
       @RequestBody AccountModifyRequest account) {
     accountService.updateAccount(id, account);
 
-    return CommonResponse.success(null, "pk-"+id + " modified");
+    return CommonResponse.success(null, "pk-"+id + " info modified");
   }
 
-  /***
+  /**
+   * 계정의 비밀번호를 변경하는 메서드
+   * @param id - 수정할 계정의 pk id
+   * @param password - 변경할 raw 비밀번호
+   * @return only message
+   */
+  @PutMapping("/{id}/password")
+  @ResponseStatus(HttpStatus.OK)
+  public <T> CommonResponse<T> modifyPassword(@PathVariable Long id,
+      @RequestBody AccountAuthModifyRequest password) {
+    accountService.updateAccountPassword(id, password.getPassword());
+
+    return CommonResponse.success(null, "pk-"+id + " password modified");
+  }
+
+  /**
    * DB에 저장된 특정 유저의 정보를 삭제하는 메서드
    * @param id - 삭제할 유저 ID
    * @return 단순 성공 메세지 반환
    */
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public CommonResponse deleteAccount(@PathVariable Long id) {
+  public <T> CommonResponse<T> deleteAccount(@PathVariable Long id) {
     accountService.deleteAccount(id);
     return
         CommonResponse.success(null, String.format("[%s] deleted successfully !", id));

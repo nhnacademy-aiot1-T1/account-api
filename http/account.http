@@ -3,10 +3,10 @@ POST http://localhost:8080/api/account/users
 Content-Type: application/json
 
 {
-  "userId": "account",
+  "userId": "qaw",
   "password": "1234",
-  "name": "user1",
-  "email": "account@account"
+  "name": "미정",
+  "email": "mj@account"
 }
 ### 계정 등록
 POST http://localhost:8080/api/account/users
@@ -32,22 +32,32 @@ Content-Type: application/json
 GET http://localhost:8080/api/account/users
 
 ### 계정 조회
-GET http://localhost:8080/api/account/users/9
+GET http://localhost:8080/api/account/users/2
 Content-Type: application/json
 
 ### 로그인 아이디 비밀번호 조회
-GET http://localhost:8080/api/account/users/admin/credentials
+GET http://localhost:8080/api/account/users/account/credentials
 
 ### OAuth 로그인 아이디 비밀번호 조회
 GET http://localhost:8080/api/account/oauth/users/oauthId
 
 ### 계정 수정
-PUT http://localhost:8080/api/account/users/9
+PUT http://localhost:8080/api/account/users/1
 Content-Type: application/json
 
 {
-  "phone": "010-1122-3333",
+  "name": "account1",
+  "phone": "010-1122-3334",
+  "email": "email@aiotone.live",
   "role": "ADMIN"
+}
+
+### 비밀번호 수정
+PUT http://localhost:8080/api/account/users/3/password
+Content-Type: application/json
+
+{
+  "password": "asdf"
 }
 
 ### 계정 삭제

@@ -85,8 +85,7 @@ class AccountServiceTest {
     AccountAuth accountAuth = new AccountAuth(
         account.getId(),
         "userId",
-        "user password",
-        account
+        "user password"
     );
 
     Mockito.when(accountRepository.existsById(any())).thenReturn(false);
@@ -122,8 +121,7 @@ class AccountServiceTest {
     AccountAuth accountAuth = new AccountAuth(
         1L,
         "userId",
-        "password",
-        account
+        "password"
     );
 
 
@@ -134,7 +132,6 @@ class AccountServiceTest {
 
     AccountModifyRequest modifyRequest = new AccountModifyRequest(
         "update name",
-        "update password",
         "010-1111-1111",
         "email@email.com",
         AccountStatus.DEACTIVATED,

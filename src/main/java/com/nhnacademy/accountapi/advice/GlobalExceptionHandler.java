@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * Account와 Response관련 에러 Handler 입니다
  */
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler{
 
   /**
    * Account를 조회할 때 Account 객체가 null인 경우 발생하는 에러에 대한 처리 메서드 입니다
@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(AccountNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  public CommonResponse handleAccountNotFoundException(
+  public <T> CommonResponse<T> handleAccountNotFoundException(
       AccountNotFoundException e) {
 
     return CommonResponse.fail(null, e.getMessage());
@@ -34,8 +34,8 @@ public class GlobalExceptionHandler {
    * @return error에 대한 내용을 응답으로 보냅니다
    */
   @ExceptionHandler(AccountDeactivatedException.class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
-  public CommonResponse handleAccountDeactivatedException(AccountDeactivatedException e) {
+  @ResponseStatus(HttpStatus.NOT_FOUND) // todo : 상태코드 고민
+  public <T> CommonResponse<T> handleAccountDeactivatedException(AccountDeactivatedException e) {
     return CommonResponse.fail(null, e.getMessage());
   }
 
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(AccountAlreadyExistException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
-  public CommonResponse handleAccountAlreadyExistException(
+  public <T> CommonResponse<T> handleAccountAlreadyExistException(
       AccountAlreadyExistException e) {
     return CommonResponse.fail(null, e.getMessage());
   }

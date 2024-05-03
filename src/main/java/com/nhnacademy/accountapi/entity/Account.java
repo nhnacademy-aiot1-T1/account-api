@@ -1,11 +1,10 @@
 package com.nhnacademy.accountapi.entity;
 
 
-import com.nhnacademy.accountapi.dto.OAuthResponse;
+import com.nhnacademy.accountapi.dto.AccountModifyRequest;
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
 import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
 import com.nhnacademy.accountapi.entity.enumfield.AuthType;
-import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,9 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -33,8 +32,8 @@ import org.hibernate.annotations.DynamicInsert;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @DynamicInsert
+@ToString
 public class Account {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,6 +62,7 @@ public class Account {
   @Enumerated(EnumType.STRING)
   private AccountRole role;
 
+
   public void changeName(String newName) {
     this.name = newName;
   }
@@ -83,21 +83,12 @@ public class Account {
     this.role = role;
   }
 
-  public AccountInfoResponse toAccountInfoResponse() {
-    return AccountInfoResponse.builder()
-        .id(id)
-        .name(name)
-        .phone(phone)
-        .email(email)
-        .role(role)
-        .build();
+  public void updateInfo(AccountModifyRequest request) {
+    this.name = request.getName();
+    this.phone = request.getPhone();
+    this.email = request.getEmail();
+    this.status = request.getStatus();
+    this.role = request.getRole();
   }
 
-  public OAuthResponse toOAuthResponse() {
-    return OAuthResponse.builder()
-        .id(id)
-        .name(name)
-        .role(role)
-        .build();
-  }
 }

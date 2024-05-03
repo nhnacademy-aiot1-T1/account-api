@@ -16,6 +16,8 @@ public interface AccountService {
 
   void updateAccount(Long userId, AccountModifyRequest user);
 
+  void updateAccountPassword(Long id, String password);
+
   void deleteAccount(Long id);
 
   List<AccountInfoResponse> getAccountList();

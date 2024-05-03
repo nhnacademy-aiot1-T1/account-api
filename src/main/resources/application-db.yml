@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url:
-    username:
-    password:
+    url: 'jdbc:mysql://133.186.244.96:3306/nhn_academy_10'
+    username: 'nhn_academy_10'
+    password: 'hrEgIX$fTXw6kJR&'
