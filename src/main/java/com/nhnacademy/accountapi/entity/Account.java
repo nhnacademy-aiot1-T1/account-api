@@ -58,7 +58,7 @@ public class Account {
   private AccountStatus status;
 
   @Column
-  @ColumnDefault("USER")
+  @ColumnDefault("NONE")
   @Enumerated(EnumType.STRING)
   private AccountRole role;
 
