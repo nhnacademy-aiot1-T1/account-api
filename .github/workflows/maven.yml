@@ -42,15 +42,17 @@ jobs:
       with:
         files: ./src/main/resources/application-db.yml
       env:
-        spring.datasource.url: ${{ secrets.DB_URL }}
-        spring.datasource.username: ${{ secrets.DB_USERNAME }}
-        spring.datasource.password: ${{ secrets.DB_PASSWORD }}
+        spring.datasource.url: ${{ secrets.MYSQL_URL }}
+        spring.datasource.username: ${{ secrets.MYSQL_USERNAME }}
+        spring.datasource.password: ${{ secrets.MYSQL_PASSWORD }}
 
     - name: secret test
       env:
-        DB_USERNAME: ${{ secrets.DB_USERNAME }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_URL: ${{ secrets.MYSQL_URL }}
+        DB_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+        DB_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
       run: |
+        echo $DB_URL
         echo $DB_USERNAME
         echo $DB_PASSWORD
 
