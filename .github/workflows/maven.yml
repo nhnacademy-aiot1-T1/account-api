@@ -46,6 +46,14 @@ jobs:
         spring.datasource.username: ${{ secrets.DB_USERNAME }}
         spring.datasource.password: ${{ secrets.DB_PASSWORD }}
 
+    - name: secret test
+      env:
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      run: |
+        echo $GIT_EMAIL
+        echo $GIT_NAME
+
     - name : Run SonarQube
       run : mvn sonar:sonar -Dsonar.projectKey=github-action -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.login=${{secrets.SONAR_TOKEN}}
 
