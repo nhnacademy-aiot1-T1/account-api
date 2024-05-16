@@ -9,22 +9,22 @@ import lombok.ToString;
 @ToString
 public class OAuthRegisterRequest {
   private final String oauthId;
-  private final String type;
+  private final String oauthType;
+  private final String name;
+  private final String email;
 
-  public OAuthRegisterRequest(String oauthId, String type, String name, String email) {
+  public OAuthRegisterRequest(String oauthId, String oauthType, String name, String email) {
     this.oauthId = oauthId;
-    this.type = type.toUpperCase();
+    this.oauthType = oauthType.toUpperCase();
     this.name = name;
     this.email = email;
   }
 
-  private final String name;
-  private final String email;
-
   public Account toAccount() {
     return Account.builder()
         .name(name)
-        .authType(AuthType.valueOf(type))
+        .authType(AuthType.valueOf(oauthType))
+        .email(email)
         .build();
   }
 }
