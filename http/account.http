@@ -23,7 +23,7 @@ POST http://localhost:8080/api/account/oauth/users
 Content-Type: application/json
 
 {
-  "oauthId": "oauthtest",
+  "oauthId": "oauthtest1",
   "oauthType": "payco",
   "name": "opc",
   "email": "email@sdas"
@@ -33,21 +33,21 @@ Content-Type: application/json
 GET http://localhost:8080/api/account/users
 
 ### 계정 조회
-GET http://localhost:8080/api/account/users/2
+GET http://localhost:8080/api/account/users/4
 Content-Type: application/json
 
 ### 로그인 아이디 비밀번호 조회
-GET http://localhost:8080/api/account/users/account/credentials
+GET http://localhost:8080/api/account/users/admin/credentials
 
-### OAuth 로그인 아이디 비밀번호 조회
-GET http://localhost:8080/api/account/oauth/users/oauthId
+### OAuth 조회
+GET http://localhost:8080/api/account/oauth/users/oauthtest1
 
 ### 계정 수정
-PUT http://localhost:8080/api/account/users/1
+PUT http://localhost:8080/api/account/users/3
 Content-Type: application/json
 
 {
-  "name": "account1",
+  "name": "qaw",
   "phone": "010-1122-3334",
   "email": "email@aiotone.live",
   "role": "ADMIN"
@@ -62,4 +62,4 @@ Content-Type: application/json
 }
 
 ### 계정 삭제
-DELETE http://localhost:8080/api/account/users/2
+DELETE http://localhost:8080/api/account/users/3

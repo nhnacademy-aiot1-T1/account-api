@@ -1,5 +1,6 @@
 package com.nhnacademy.accountapi.service;
 
+import com.nhnacademy.accountapi.exception.AccountAuthNotFoundException;
 import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
 import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
 import com.nhnacademy.accountapi.entity.Account;
@@ -51,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
   @Transactional(readOnly = true)
   public AccountCredentialsResponse getAccountAuth(String loginId) {
     AccountAuth accountAuth = accountAuthRepository.findByLoginId(loginId)
-        .orElseThrow(() -> new AccountNotFoundException(loginId));
+        .orElseThrow(() -> new AccountAuthNotFoundException(loginId));
     return AccountCredentialsResponse.fromAccountAuth(accountAuth);
   }
 

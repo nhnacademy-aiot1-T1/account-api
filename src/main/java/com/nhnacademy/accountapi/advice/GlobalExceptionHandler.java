@@ -2,6 +2,7 @@ package com.nhnacademy.accountapi.advice;
 
 import com.nhnacademy.accountapi.dto.CommonResponse;
 import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
+import com.nhnacademy.accountapi.exception.AccountAuthNotFoundException;
 import com.nhnacademy.accountapi.exception.AccountDeactivatedException;
 import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -29,13 +30,26 @@ public class GlobalExceptionHandler{
   }
 
   /**
-   * 인증을 위한 AccountAuth 정보를 조회할 때 Account의 상태가 비활성화인 경우 발생하는 에러 처리 메서드 입니다
+   * 인증을 위한 AccountAuth 정보를 조회할 때 Account 의 상태가 비활성화인 경우 발생하는 에러 처리 메서드 입니다
    * @param e
-   * @return error에 대한 내용을 응답으로 보냅니다
+   * @return error 에 대한 내용을 응답으로 보냅니다
    */
   @ExceptionHandler(AccountDeactivatedException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND) // todo : 상태코드 고민
   public <T> CommonResponse<T> handleAccountDeactivatedException(AccountDeactivatedException e) {
+    return CommonResponse.fail(null, e.getMessage());
+  }
+
+  /**
+   * 인증을 위한 AccountAuth 정보를 조회할 때 id가 AccountAuth에 존재하지 않을 경우 발생하는 에러를 처리하는 메서드 입니다.
+   * ex) Account테이블에 존재하지 않는 id, OAuth 계정의 pk id로 조회 시도
+   * @param e
+   * @return
+   * @param <T>
+   */
+  @ExceptionHandler(AccountAuthNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public <T> CommonResponse<T> handleAccountAuthNotFoundException(AccountAuthNotFoundException e) {
     return CommonResponse.fail(null, e.getMessage());
   }
 

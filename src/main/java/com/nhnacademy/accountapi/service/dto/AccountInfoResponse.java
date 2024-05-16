@@ -2,7 +2,7 @@ package com.nhnacademy.accountapi.service.dto;
 
 import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
-import lombok.Builder;
+import com.nhnacademy.accountapi.entity.enumfield.AuthType;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -18,14 +18,16 @@ public class AccountInfoResponse {
   private final String phone;
   private final String email;
   private final AccountRole role;
+  private final AuthType authType;
 
-  @Builder
-  public AccountInfoResponse(Long id, String name, String phone, String email, AccountRole role) {
+  private AccountInfoResponse(Long id, String name, String phone, String email, AccountRole role,
+      AuthType authType) {
     this.id = id;
     this.name = name;
     this.phone = phone;
     this.email = email;
     this.role = role;
+    this.authType = authType;
   }
 
   public static AccountInfoResponse fromAccount(Account account) {
@@ -34,6 +36,8 @@ public class AccountInfoResponse {
         account.getName(),
         account.getPhone(),
         account.getEmail(),
-        account.getRole());
+        account.getRole(),
+        account.getAuthType()
+    );
   }
 }

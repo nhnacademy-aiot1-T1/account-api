@@ -6,8 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * OAuth로 가입한 계정의 OAuth에서 제공해주는 id를 관리하는 Entity 입니다
@@ -17,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@Getter
 public class AccountOAuth {
   @Id
   private Long id;

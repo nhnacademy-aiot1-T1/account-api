@@ -70,10 +70,10 @@ public class Account {
     this.name = request.getName();
     this.phone = request.getPhone();
     this.email = request.getEmail();
-    if (status != null) {
+    if (request.getStatus() != null) {
       this.status = request.getStatus();
     }
-    if (role != null) {
+    if (request.getStatus() != null) {
       this.role = request.getRole();
     }
   }

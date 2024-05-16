@@ -1,6 +1,5 @@
 package com.nhnacademy.accountapi.service;
 
-
 import com.nhnacademy.accountapi.dto.OAuthResponse;
 import com.nhnacademy.accountapi.entity.AccountOAuth;
 import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
@@ -10,7 +9,6 @@ import com.nhnacademy.accountapi.dto.OAuthRegisterRequest;
 import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.repository.AccountOAuthRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +23,7 @@ public class OAuthServiceImpl implements OAuthService {
   @Transactional(readOnly = true)
   public OAuthResponse getAccountInfo(String oauthId) {
     Account account = accountRepository.findByOauthId(oauthId).orElseThrow(() -> new AccountNotFoundException(oauthId));
-
-    OAuthResponse oAuthResponse = OAuthResponse.builder().build();
-    BeanUtils.copyProperties(account, oAuthResponse);
-    return oAuthResponse;
+    return OAuthResponse.toOauthResponseFromAccount(account, oauthId);
   }
 
   @Override
@@ -45,8 +40,6 @@ public class OAuthServiceImpl implements OAuthService {
         .build();
     accountOauthRepository.save(oAuth);
 
-    OAuthResponse oAuthResponse = OAuthResponse.builder().build();
-    BeanUtils.copyProperties(oAuth, oAuthResponse);
-    return oAuthResponse;
+    return OAuthResponse.toOauthResponseFromAccount(account, oAuth.getOauthId());
   }
 }
