@@ -8,22 +8,23 @@ Content-Type: application/json
   "name": "미정",
   "email": "mj@account"
 }
-### 계정 등록
+### Direct 계정 등록
 POST http://localhost:8080/api/account/users
 Content-Type: application/json
+
 {
   "userId": "admin",
   "password": "1234",
   "name": "admin",
   "email": "admin@admi"
 }
-### 계정 등록
+### Oauth 계정 등록
 POST http://localhost:8080/api/account/oauth/users
 Content-Type: application/json
 
 {
-  "oauthId": "oauthId",
-  "type": "payco",
+  "oauthId": "oauthtest",
+  "oauthType": "payco",
   "name": "opc",
   "email": "email@sdas"
 }
