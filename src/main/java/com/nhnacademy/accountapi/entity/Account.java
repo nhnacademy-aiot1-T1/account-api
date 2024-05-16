@@ -53,42 +53,29 @@ public class Account {
   private AuthType authType;
 
   @Column
-  @ColumnDefault("ACTIVE")
+  @ColumnDefault("'ACTIVE'")
   @Enumerated(EnumType.STRING)
   private AccountStatus status;
 
   @Column
-  @ColumnDefault("NONE")
+  @ColumnDefault("'NONE'")
   @Enumerated(EnumType.STRING)
   private AccountRole role;
 
-
-  public void changeName(String newName) {
-    this.name = newName;
-  }
-
-  public void changePhone(String newPhone) {
-    this.phone = newPhone;
-  }
-
-  public void changeEmail(String newEmail) {
-    this.email = newEmail;
-  }
-
   public void changeStatus(AccountStatus status) {
     this.status = status;
-  }
-
-  public void changeRole(AccountRole role) {
-    this.role = role;
   }
 
   public void updateInfo(AccountModifyRequest request) {
     this.name = request.getName();
     this.phone = request.getPhone();
     this.email = request.getEmail();
-    this.status = request.getStatus();
-    this.role = request.getRole();
+    if (status != null) {
+      this.status = request.getStatus();
+    }
+    if (role != null) {
+      this.role = request.getRole();
+    }
   }
 
 }
