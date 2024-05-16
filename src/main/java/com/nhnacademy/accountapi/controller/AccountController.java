@@ -10,7 +10,6 @@ import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
 import com.nhnacademy.accountapi.service.AccountService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * User 정보와 관련하여 기능을 제공하는 Controller
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/account/users")
 @RequiredArgsConstructor

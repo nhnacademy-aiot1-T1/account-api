@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * OAuth 계정과 관련된 서비스를 제공하는 service class 입니다
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -19,6 +22,11 @@ public class OAuthServiceImpl implements OAuthService {
   private final AccountRepository accountRepository;
   private final AccountOAuthRepository accountOauthRepository;
 
+  /**
+   * OAuth 계정과 관련된 정보를 전달합니다
+   * @param oauthId - 조회할 oauth 계정 id
+   * @return id, oauthId, name, role
+   */
   @Override
   @Transactional(readOnly = true)
   public OAuthResponse getAccountInfo(String oauthId) {
@@ -26,6 +34,11 @@ public class OAuthServiceImpl implements OAuthService {
     return OAuthResponse.toOauthResponseFromAccount(account, oauthId);
   }
 
+  /**
+   * OAuth 계정정보를 DB에 등록합니다
+   * @param oAuthRegisterRequest - 로그인 id, OAuthType(PAYCO 등), name, email
+   * @return id, oauthId, name, role
+   */
   @Override
   public OAuthResponse registerAccount(OAuthRegisterRequest oAuthRegisterRequest) {
     if (accountOauthRepository.existsByOauthId(oAuthRegisterRequest.getOauthId())) {
