@@ -1,4 +1,4 @@
-package com.nhnacademy.accountapi.dto;
+package com.nhnacademy.accountapi.controller.dto;
 
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
 import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;

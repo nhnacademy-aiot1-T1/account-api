@@ -1,7 +1,7 @@
 package com.nhnacademy.accountapi.entity;
 
 
-import com.nhnacademy.accountapi.dto.AccountModifyRequest;
+import com.nhnacademy.accountapi.controller.dto.AccountModifyRequest;
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
 import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
 import com.nhnacademy.accountapi.entity.enumfield.AuthType;
@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,8 +31,8 @@ import org.hibernate.annotations.DynamicInsert;
 @Table(name = "account")
 @Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @DynamicInsert
 @ToString
 public class Account {

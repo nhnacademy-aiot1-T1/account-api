@@ -1,7 +1,7 @@
 package com.nhnacademy.accountapi.controller;
 
-import com.nhnacademy.accountapi.dto.OAuthResponse;
-import com.nhnacademy.accountapi.dto.OAuthRegisterRequest;
+import com.nhnacademy.accountapi.service.dto.OAuthResponse;
+import com.nhnacademy.accountapi.controller.dto.OAuthRegisterRequest;
 import com.nhnacademy.accountapi.service.OAuthService;
 import com.nhnacademy.common.dto.CommonResponse;
 import lombok.RequiredArgsConstructor;

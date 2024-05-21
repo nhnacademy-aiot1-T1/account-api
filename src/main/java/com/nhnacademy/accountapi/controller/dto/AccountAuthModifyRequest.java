@@ -1,4 +1,4 @@
-package com.nhnacademy.accountapi.dto;
+package com.nhnacademy.accountapi.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;

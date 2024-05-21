@@ -15,16 +15,17 @@ public class AccountCredentialsResponse {
   private final String password;
 
   @Builder
-  public AccountCredentialsResponse(Long id, String loginId, String password) {
+  private AccountCredentialsResponse(Long id, String loginId, String password) {
     this.id = id;
     this.loginId = loginId;
     this.password = password;
   }
 
   public static AccountCredentialsResponse fromAccountAuth(AccountAuth accountAuth) {
-    return new AccountCredentialsResponse(
-        accountAuth.getId(),
-        accountAuth.getLoginId(),
-        accountAuth.getPassword());
+    return AccountCredentialsResponse.builder()
+        .id(accountAuth.getId())
+        .loginId(accountAuth.getLoginId())
+        .password(accountAuth.getPassword())
+        .build();
   }
 }

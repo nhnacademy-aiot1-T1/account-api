@@ -1,14 +1,15 @@
 
 package com.nhnacademy.accountapi.controller;
 
-import com.nhnacademy.accountapi.dto.AccountAuthModifyRequest;
+import com.nhnacademy.accountapi.controller.dto.AccountAuthModifyRequest;
 import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
 import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
-import com.nhnacademy.accountapi.dto.AccountModifyRequest;
-import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
+import com.nhnacademy.accountapi.controller.dto.AccountModifyRequest;
+import com.nhnacademy.accountapi.controller.dto.AccountRegisterRequest;
 import com.nhnacademy.accountapi.service.AccountService;
 import com.nhnacademy.common.dto.CommonResponse;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -74,7 +75,7 @@ public class AccountController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public <T> CommonResponse<T> registerUser(
-      @RequestBody AccountRegisterRequest user) {
+      @Valid @RequestBody AccountRegisterRequest user) {
     accountService.registerAccount(user);
     return CommonResponse.success(null, "회원 등록이 정상적으로 처리되었습니다 : " + user.getName());
   }

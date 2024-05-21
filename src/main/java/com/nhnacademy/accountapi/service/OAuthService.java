@@ -1,7 +1,7 @@
 package com.nhnacademy.accountapi.service;
 
-import com.nhnacademy.accountapi.dto.OAuthResponse;
-import com.nhnacademy.accountapi.dto.OAuthRegisterRequest;
+import com.nhnacademy.accountapi.service.dto.OAuthResponse;
+import com.nhnacademy.accountapi.controller.dto.OAuthRegisterRequest;
 
 public interface OAuthService {
 

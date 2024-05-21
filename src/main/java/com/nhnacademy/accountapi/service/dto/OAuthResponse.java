@@ -1,4 +1,4 @@
-package com.nhnacademy.accountapi.dto;
+package com.nhnacademy.accountapi.service.dto;
 
 import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
@@ -21,7 +21,7 @@ public class OAuthResponse {
     this.role = role;
   }
 
-  public static OAuthResponse toOauthResponseFromAccount(Account account, String oAuthId) {
+  public static OAuthResponse fromAccount(Account account, String oAuthId) {
     return new OAuthResponse(account.getId(), oAuthId, account.getName(), account.getRole());
   }
 }

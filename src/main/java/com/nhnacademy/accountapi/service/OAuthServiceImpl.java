@@ -1,11 +1,11 @@
 package com.nhnacademy.accountapi.service;
 
-import com.nhnacademy.accountapi.dto.OAuthResponse;
+import com.nhnacademy.accountapi.service.dto.OAuthResponse;
 import com.nhnacademy.accountapi.entity.AccountOAuth;
 import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
 import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import com.nhnacademy.accountapi.repository.AccountRepository;
-import com.nhnacademy.accountapi.dto.OAuthRegisterRequest;
+import com.nhnacademy.accountapi.controller.dto.OAuthRegisterRequest;
 import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.repository.AccountOAuthRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class OAuthServiceImpl implements OAuthService {
   @Transactional(readOnly = true)
   public OAuthResponse getAccountInfo(String oauthId) {
     Account account = accountRepository.findByOauthId(oauthId).orElseThrow(() -> new AccountNotFoundException(oauthId));
-    return OAuthResponse.toOauthResponseFromAccount(account, oauthId);
+    return OAuthResponse.fromAccount(account, oauthId);
   }
 
   /**
@@ -53,6 +53,6 @@ public class OAuthServiceImpl implements OAuthService {
         .build();
     accountOauthRepository.save(oAuth);
 
-    return OAuthResponse.toOauthResponseFromAccount(account, oAuth.getOauthId());
+    return OAuthResponse.fromAccount(account, oAuth.getOauthId());
   }
 }

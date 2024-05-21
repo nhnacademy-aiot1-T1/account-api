@@ -1,4 +1,4 @@
-package com.nhnacademy.accountapi.dto;
+package com.nhnacademy.accountapi.controller.dto;
 
 import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.entity.enumfield.AuthType;
