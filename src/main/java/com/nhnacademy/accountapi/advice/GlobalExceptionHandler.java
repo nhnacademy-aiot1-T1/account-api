@@ -1,38 +1,41 @@
 package com.nhnacademy.accountapi.advice;
 
-import com.nhnacademy.accountapi.dto.CommonResponse;
-import com.nhnacademy.accountapi.exception.CommonResponseFailException;
-import com.nhnacademy.accountapi.exception.UserAlreadyExistException;
-import com.nhnacademy.accountapi.exception.UserNotFoundException;
+import com.nhnacademy.accountapi.exception.CommonAccountApiException;
+import com.nhnacademy.common.dto.CommonResponse;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Account와 Response관련 에러 Handler 입니다
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(UserNotFoundException.class)
-  public ResponseEntity<CommonResponse<String>> handleUserNotFoundException(
-      UserNotFoundException e) {
-    CommonResponse<String> error = CommonResponse.fail(e.getMessage());
-
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+  @ExceptionHandler(CommonAccountApiException.class)
+  public <T> CommonResponse<T> handleAccountApiException(CommonAccountApiException e, HttpServletResponse response) {
+    response.setStatus(e.getHttpStatus().value());
+    return CommonResponse.fail(e.getMessage());
   }
 
-  @ExceptionHandler(UserAlreadyExistException.class)
-  public ResponseEntity<CommonResponse<String>> handleUserAlreadyExistException(
-      UserAlreadyExistException e) {
-    CommonResponse<String> error = CommonResponse.fail(e.getMessage());
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public <T> CommonResponse<T> handleMethodArgumentNotValidException(
+      MethodArgumentNotValidException e) {
+    BindingResult bindingResult = e.getBindingResult();
+    StringBuilder builder = new StringBuilder();
 
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
-  }
-
-  @ExceptionHandler(CommonResponseFailException.class)
-  public ResponseEntity<CommonResponse<String>> handleRequestStatusFail(
-      CommonResponseFailException e) {
-    CommonResponse<String> error = CommonResponse.fail(null, e.getMessage());
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    for (FieldError fieldError : bindingResult.getFieldErrors()) {
+      builder.append("[").append(fieldError.getField()).append("] ")
+          .append(fieldError.getDefaultMessage())
+          .append(". 입력된 값 : '").append(fieldError.getRejectedValue()).append("'");
+    }
+    return CommonResponse.fail(builder.toString());
   }
 
 }

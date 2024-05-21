@@ -1,16 +1,15 @@
-### 유저 등록
-POST http://localhost:8080/api/users
+### 계정 등록
+POST http://localhost:8080/api/account/users
 Content-Type: application/json
 
 {
-  "userId": "user",
+  "userId": "qaw",
   "password": "1234",
-  "name": "user1",
-  "email": "user@user"
+  "name": "미정",
+  "email": "mj@account"
 }
-
-### 유저 등록
-POST http://localhost:8080/api/users
+### Direct 계정 등록
+POST http://localhost:8080/api/account/users
 Content-Type: application/json
 
 {
@@ -19,23 +18,48 @@ Content-Type: application/json
   "name": "admin",
   "email": "admin@admi"
 }
-
-### 유저 조회
-GET http://localhost:8080/api/users/1/info
-Content-Type: application/json
-
-### 아이디 비밀번호 조회
-GET http://localhost:8080/api/users/admin/auth
-
-### 유저 수정
-PUT http://localhost:8080/api/users/1
+### Oauth 계정 등록
+POST http://localhost:8080/api/account/oauth/users
 Content-Type: application/json
 
 {
-  "password": "",
-  "status": "ACTIVE",
+  "oauthId": "oauthtest1",
+  "oauthType": "payco",
+  "name": "opc",
+  "email": "email@sdas"
+}
+
+### 전체 계정 조회
+GET http://localhost:8080/api/account/users
+
+### 계정 조회
+GET http://localhost:8080/api/account/users/4
+Content-Type: application/json
+
+### 로그인 아이디 비밀번호 조회
+GET http://localhost:8080/api/account/users/admin/credentials
+
+### OAuth 조회
+GET http://localhost:8080/api/account/oauth/users/oauthtest1
+
+### 계정 수정
+PUT http://localhost:8080/api/account/users/3
+Content-Type: application/json
+
+{
+  "name": "qaw",
+  "phone": "010-1122-3334",
+  "email": "email@aiotone.live",
   "role": "ADMIN"
 }
 
-### 유저 삭제
-DELETE http://localhost:8080/api/users/1
+### 비밀번호 수정
+PUT http://localhost:8080/api/account/users/3/password
+Content-Type: application/json
+
+{
+  "password": "asdf"
+}
+
+### 계정 삭제
+DELETE http://localhost:8080/api/account/users/3
