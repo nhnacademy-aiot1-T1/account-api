@@ -1,10 +1,11 @@
 package com.nhnacademy.accountapi.controller;
 
 import com.nhnacademy.accountapi.dto.OAuthResponse;
-import com.nhnacademy.accountapi.dto.CommonResponse;
 import com.nhnacademy.accountapi.dto.OAuthRegisterRequest;
 import com.nhnacademy.accountapi.service.OAuthService;
+import com.nhnacademy.common.dto.CommonResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,17 +29,17 @@ public class OAuthController {
   private final OAuthService oAuthService;
 
   @GetMapping("/{oauthId}")
-  public ResponseEntity<CommonResponse<OAuthResponse>> getAccountInfo(
+  public ResponseEntity<CommonResponse<OAuthResponse>> getOAuthInfo(
       @PathVariable String oauthId) {
     OAuthResponse data = oAuthService.getAccountInfo(oauthId);
     return ResponseEntity.ok().body(CommonResponse.success(data, "account info - " + oauthId));
   }
 
   @PostMapping
-  public ResponseEntity<CommonResponse<OAuthResponse>> registerAccount(
+  public ResponseEntity<CommonResponse<OAuthResponse>> registerOAuthAccount(
       @RequestBody OAuthRegisterRequest oAuthRegisterRequest) {
     OAuthResponse data = oAuthService.registerAccount(oAuthRegisterRequest);
-    return ResponseEntity.ok().body(CommonResponse.success(data, "회원 등록이 정상적으로 처리되었습니다 : "+oAuthRegisterRequest.getOauthId()));
+    return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.success(data, "회원 등록이 정상적으로 처리되었습니다 : "+oAuthRegisterRequest.getOauthId()));
   }
 
 }

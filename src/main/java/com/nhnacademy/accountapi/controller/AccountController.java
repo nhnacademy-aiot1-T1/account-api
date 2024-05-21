@@ -4,10 +4,10 @@ package com.nhnacademy.accountapi.controller;
 import com.nhnacademy.accountapi.dto.AccountAuthModifyRequest;
 import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
 import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
-import com.nhnacademy.accountapi.dto.CommonResponse;
 import com.nhnacademy.accountapi.dto.AccountModifyRequest;
 import com.nhnacademy.accountapi.dto.AccountRegisterRequest;
 import com.nhnacademy.accountapi.service.AccountService;
+import com.nhnacademy.common.dto.CommonResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,6 +40,7 @@ public class AccountController {
 
   /**
    * auth server에서 Direct login을 할 때 id, password를 체크하기 위해 보내는 유저 정보
+   *
    * @param loginId - 로그인정보를 확인할 Login Id
    * @return id, password 를 담은 DTO
    */
@@ -52,6 +53,7 @@ public class AccountController {
 
   /**
    * DB에 저장된 특정 유저 정보를 조회하는 메서드
+   *
    * @param id - 조회할 대상의 고유 id
    * @return 유저의 id, name, auth type,
    */
@@ -59,12 +61,13 @@ public class AccountController {
   @ResponseStatus(HttpStatus.OK)
   public CommonResponse<AccountInfoResponse> getAccountInfo(@PathVariable Long id) {
     AccountInfoResponse data = accountService.getAccountInfo(id);
-    return CommonResponse.success(data, "account Info");
+    return CommonResponse.success(data, "account info");
   }
 
 
   /**
    * 계정 등록 메서드
+   *
    * @param user - db에 저장할 계정 정보 (userId, password, name, email)
    * @return only message
    */
@@ -73,12 +76,13 @@ public class AccountController {
   public <T> CommonResponse<T> registerUser(
       @RequestBody AccountRegisterRequest user) {
     accountService.registerAccount(user);
-    return CommonResponse.success(null, "회원 등록이 정상적으로 처리되었습니다 : "+user.getName());
+    return CommonResponse.success(null, "회원 등록이 정상적으로 처리되었습니다 : " + user.getName());
   }
 
   /**
    * DB에 저장된 특정 유저의 정보를 수정하는 메서드
-   * @param id - 수정할 유저 ID
+   *
+   * @param id      - 수정할 유저 ID
    * @param account - 수정된 정보를 담은 DTO (password, status, role)
    * @return only message
    */
@@ -88,12 +92,13 @@ public class AccountController {
       @RequestBody AccountModifyRequest account) {
     accountService.updateAccount(id, account);
 
-    return CommonResponse.success(null, "pk-"+id + " info modified");
+    return CommonResponse.success(null, "계정 정보가 수정되었습니다 : " + id);
   }
 
   /**
    * 계정의 비밀번호를 변경하는 메서드
-   * @param id - 수정할 계정의 pk id
+   *
+   * @param id       - 수정할 계정의 pk id
    * @param password - 변경할 raw 비밀번호
    * @return only message
    */
@@ -103,11 +108,12 @@ public class AccountController {
       @RequestBody AccountAuthModifyRequest password) {
     accountService.updateAccountPassword(id, password.getPassword());
 
-    return CommonResponse.success(null, "pk-"+id + " password modified");
+    return CommonResponse.success(null, "계정 비밀번호가 수정되었습니다 : " + id);
   }
 
   /**
    * DB에 저장된 특정 유저의 정보를 삭제하는 메서드
+   *
    * @param id - 삭제할 유저 ID
    * @return 단순 성공 메세지 반환
    */
@@ -116,7 +122,7 @@ public class AccountController {
   public <T> CommonResponse<T> deleteAccount(@PathVariable Long id) {
     accountService.deleteAccount(id);
     return
-        CommonResponse.success(null, String.format("[%s] deleted successfully !", id));
+        CommonResponse.success(null, "계정이 비활성화 되었습니다 : "+ id);
   }
 
 }
