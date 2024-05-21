@@ -3,10 +3,8 @@ package com.nhnacademy.accountapi.service.dto;
 import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public class OAuthResponse {
 
   private final Long id;
