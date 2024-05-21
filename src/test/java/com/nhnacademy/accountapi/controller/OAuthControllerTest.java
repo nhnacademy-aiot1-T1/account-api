@@ -39,7 +39,7 @@ class OAuthControllerTest {
   OAuthService oAuthService;
 
   Account account;
-  AccountOAuth oauth;
+  AccountOAuth oAuth;
 
   @BeforeEach
   void setUp() {
@@ -52,7 +52,7 @@ class OAuthControllerTest {
         .role(AccountRole.ADMIN)
         .status(AccountStatus.ACTIVE)
         .build();
-    oauth = AccountOAuth.builder()
+    oAuth = AccountOAuth.builder()
         .id(1L)
         .oauthId("oauthmj")
         .build();
@@ -61,17 +61,17 @@ class OAuthControllerTest {
   @Test
   @DisplayName("OAuth 계정 인증정보(oauth id) 조회 성공")
   void getOAuthInfoSuccess() throws Exception {
-    Mockito.when(oAuthService.getAccountInfo(oauth.getOauthId()))
-        .thenReturn(OAuthResponse.fromAccount(account, oauth.getOauthId()));
+    Mockito.when(oAuthService.getAccountInfo(oAuth.getOauthId()))
+        .thenReturn(OAuthResponse.fromAccount(account, oAuth.getOauthId()));
 
-    mvc.perform(MockMvcRequestBuilders.get("/api/account/oauth/users/{oauthId}", oauth.getOauthId())
+    mvc.perform(MockMvcRequestBuilders.get("/api/account/oauth/users/{oauthId}", oAuth.getOauthId())
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("success"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(oauth.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.oauthId").value(oauth.getOauthId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(oAuth.getId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.data.oauthId").value(oAuth.getOauthId()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.message")
-            .value("account info - " + oauth.getOauthId()))
+            .value("account info - " + oAuth.getOauthId()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.timestamp").isNotEmpty())
     ;
   }
@@ -80,15 +80,15 @@ class OAuthControllerTest {
   @DisplayName("OAuth 정보 등록(연동) 성공")
   void registerOAuthAccountSuccess() throws Exception {
     Map<String, String> req = new HashMap<>();
-    req.put("oauthId", oauth.getOauthId());
+    req.put("oauthId", oAuth.getOauthId());
     req.put("oauthType", account.getAuthType().toString());
     req.put("name", account.getName());
     req.put("email", account.getEmail());
 
-    OAuthRegisterRequest request = new OAuthRegisterRequest(oauth.getOauthId(),
+    OAuthRegisterRequest request = new OAuthRegisterRequest(oAuth.getOauthId(),
         account.getAuthType().toString(), account.getName(), account.getEmail());
     Mockito.when(oAuthService.registerAccount(request)).thenReturn(
-        OAuthResponse.fromAccount(request.toAccount(), oauth.getOauthId()));
+        OAuthResponse.fromAccount(request.toAccount(), oAuth.getOauthId()));
 
     mvc.perform(MockMvcRequestBuilders.post("/api/account/oauth/users")
             .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(req)))
@@ -96,7 +96,7 @@ class OAuthControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("success"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
         .andExpect(MockMvcResultMatchers.jsonPath("$.message")
-            .value("회원 등록이 정상적으로 처리되었습니다 : " + oauth.getOauthId()))
+            .value("회원 등록이 정상적으로 처리되었습니다 : " + oAuth.getOauthId()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.timestamp").isNotEmpty())
     ;
 
