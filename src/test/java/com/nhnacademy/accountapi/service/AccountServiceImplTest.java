@@ -1,6 +1,7 @@
 package com.nhnacademy.accountapi.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
@@ -11,6 +12,9 @@ import com.nhnacademy.accountapi.entity.AccountAuth;
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
 import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
 import com.nhnacademy.accountapi.entity.enumfield.AuthType;
+import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
+import com.nhnacademy.accountapi.exception.AccountAuthNotFoundException;
+import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import com.nhnacademy.accountapi.repository.AccountAuthRepository;
 import com.nhnacademy.accountapi.repository.AccountRepository;
 import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
@@ -90,13 +94,25 @@ class AccountServiceImplTest {
     assertThat(result.getId()).isEqualTo(auth.getId());
     assertThat(result.getLoginId()).isEqualTo(auth.getLoginId());
     assertThat(result.getPassword()).isEqualTo(auth.getPassword());
+  }
 
+  @Test
+  @DisplayName("계정 인증정보 조회 실패")
+  void getAccountAuthFail() {
+    String failId = "failId";
+    Mockito.when(accountAuthRepository.findByLoginId(auth.getLoginId()))
+        .thenReturn(Optional.empty());
+
+    assertThatExceptionOfType(AccountAuthNotFoundException.class)
+        .isThrownBy(() -> accountService.getAccountAuth(failId))
+        .withMessage("유효하지 않은 id 입니다(Login ID NOT FOUND) : " + failId);
   }
 
   @Test
   @DisplayName("기본 계정정보 조회 성공")
   void getAccountInfoSuccess() {
-    Mockito.when(accountRepository.findById(account.getId())).thenReturn(Optional.ofNullable(account));
+    Mockito.when(accountRepository.findById(account.getId()))
+        .thenReturn(Optional.ofNullable(account));
 
     AccountInfoResponse result = accountService.getAccountInfo(account.getId());
 
@@ -107,6 +123,17 @@ class AccountServiceImplTest {
     assertThat(result.getEmail()).isEqualTo(account.getEmail());
     assertThat(result.getRole()).isEqualTo(account.getRole());
     assertThat(result.getAuthType()).isEqualTo(account.getAuthType());
+  }
+
+  @Test
+  @DisplayName("기본 계정정보 조회 실패")
+  void getAccountInfoFail() {
+    Long failId = 404L;
+    Mockito.when(accountRepository.findById(account.getId())).thenReturn(Optional.empty());
+
+    assertThatExceptionOfType(AccountNotFoundException.class)
+        .isThrownBy(() -> accountService.getAccountInfo(failId))
+        .withMessage("존재하지 않는 id 입니다 (PK ID NOT FOUND) : " + failId);
   }
 
   @Test
@@ -128,7 +155,23 @@ class AccountServiceImplTest {
   }
 
   @Test
-  @DisplayName("계정 수정 성공")
+  @DisplayName("계정 저장 실패")
+  void registerAccountFail() {
+    AccountRegisterRequest request = new AccountRegisterRequest(
+        auth.getLoginId(),
+        auth.getPassword(),
+        account.getName(),
+        account.getEmail()
+    );
+    Mockito.when(accountAuthRepository.existsByLoginId(request.getUserId())).thenReturn(true);
+
+    assertThatExceptionOfType(AccountAlreadyExistException.class)
+        .isThrownBy(() -> accountService.registerAccount(request))
+        .withMessage(String.format("[%s] already exist", request.getUserId()));
+  }
+
+  @Test
+  @DisplayName("계정정보 수정 성공")
   void updateAccountSuccess() {
     AccountModifyRequest request = new AccountModifyRequest(
         "new name",
@@ -137,26 +180,65 @@ class AccountServiceImplTest {
         AccountStatus.ACTIVE,
         AccountRole.ADMIN
     );
-    Mockito.when(accountRepository.findById(account.getId())).thenReturn(Optional.ofNullable(account));
+    Mockito.when(accountRepository.findById(account.getId()))
+        .thenReturn(Optional.ofNullable(account));
 
     accountService.updateAccount(account.getId(), request);
-
-
   }
 
   @Test
-  @DisplayName("비밀번호 수정 성공")
+  @DisplayName("계정정보 수정 실패")
+  void updateAccountFail() {
+    AccountModifyRequest request = new AccountModifyRequest(
+        "new name",
+        "010-3333-2222",
+        "update@email.com",
+        AccountStatus.ACTIVE,
+        AccountRole.ADMIN
+    );
+    Mockito.when(accountRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThatExceptionOfType(AccountNotFoundException.class)
+        .isThrownBy(() -> accountService.updateAccount(account.getId(), request))
+        .withMessage("존재하지 않는 id 입니다 (PK ID NOT FOUND) : "+ account.getId());
+  }
+
+  @Test
+  @DisplayName("계정 비밀번호 수정 성공")
   void updateAccountPasswordSuccess() {
     String password = "updatepw";
-    Mockito.when(accountAuthRepository.findById(account.getId())).thenReturn(Optional.ofNullable(auth));
+    Mockito.when(accountAuthRepository.findById(account.getId()))
+        .thenReturn(Optional.ofNullable(auth));
 
     accountService.updateAccountPassword(account.getId(), password);
   }
 
   @Test
+  @DisplayName("계정 비밀번호 수정 실패")
+  void updateAccountPasswordFail() {
+    String password = "anyPassword";
+    Mockito.when(accountRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThatExceptionOfType(AccountNotFoundException.class)
+        .isThrownBy(() -> accountService.updateAccountPassword(account.getId(), password))
+        .withMessage("존재하지 않는 id 입니다 (PK ID NOT FOUND) : "+ account.getId());
+  }
+
+  @Test
   @DisplayName("계정 상태 DEACTIVATED로 변경 성공")
   void deleteAccountSuccess() {
-    Mockito.when(accountRepository.findById(account.getId())).thenReturn(Optional.ofNullable(account));
+    Mockito.when(accountRepository.findById(account.getId()))
+        .thenReturn(Optional.ofNullable(account));
     accountService.deleteAccount(account.getId());
+  }
+
+  @Test
+  @DisplayName("계정 상태 DEACTIVATED로 변경 실패")
+  void deleteAccountFail() {
+    Mockito.when(accountRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThatExceptionOfType(AccountNotFoundException.class)
+        .isThrownBy(() -> accountService.deleteAccount(account.getId()))
+        .withMessage("존재하지 않는 id 입니다 (PK ID NOT FOUND) : "+ account.getId());
   }
 }

@@ -1,15 +1,19 @@
 package com.nhnacademy.accountapi.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
+import com.nhnacademy.accountapi.controller.dto.AccountRegisterRequest;
 import com.nhnacademy.accountapi.controller.dto.OAuthRegisterRequest;
 import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.entity.AccountOAuth;
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
 import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
 import com.nhnacademy.accountapi.entity.enumfield.AuthType;
+import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
+import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import com.nhnacademy.accountapi.repository.AccountOAuthRepository;
 import com.nhnacademy.accountapi.repository.AccountRepository;
 import com.nhnacademy.accountapi.service.dto.OAuthResponse;
@@ -24,6 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 class OAuthServiceImplTest {
+
   OAuthService oAuthService;
 
   @MockBean
@@ -69,8 +74,18 @@ class OAuthServiceImplTest {
   }
 
   @Test
+  @DisplayName("OAuth 계정 Id로 정보 조회 실패")
+  void getAccountInfoFail() {
+    Mockito.when(accountRepository.findById(account.getId())).thenReturn(Optional.empty());
+
+    assertThatExceptionOfType(AccountNotFoundException.class)
+        .isThrownBy(() -> oAuthService.getAccountInfo(oAuth.getOauthId()))
+        .withMessage("존재하지 않는 id 입니다 (Login ID/OAuth ID NOT FOUND) : " + oAuth.getOauthId());
+  }
+
+  @Test
   @DisplayName("OAuth 계정 등록 (연동) 성공")
-  void registerAccount() {
+  void registerAccountSuccess() {
     OAuthRegisterRequest request = new OAuthRegisterRequest(
         oAuth.getOauthId(),
         account.getAuthType().toString(),
@@ -89,5 +104,21 @@ class OAuthServiceImplTest {
     assertThat(result.getOauthId()).isEqualTo(oAuth.getOauthId());
     assertThat(result.getName()).isEqualTo(account.getName());
     assertThat(result.getRole()).isEqualTo(account.getRole());
+  }
+
+  @Test
+  @DisplayName("OAuth 계정 등록 (연동) 실패")
+  void registerAccountFail() {
+    OAuthRegisterRequest request = new OAuthRegisterRequest(
+        oAuth.getOauthId(),
+        account.getAuthType().toString(),
+        account.getName(),
+        account.getEmail()
+    );
+    Mockito.when(oAuthRepository.existsByOauthId(request.getOauthId())).thenReturn(true);
+
+    assertThatExceptionOfType(AccountAlreadyExistException.class)
+        .isThrownBy(() -> oAuthService.registerAccount(request))
+        .withMessage(String.format("[%s] already exist", request.getOauthId()));
   }
 }
