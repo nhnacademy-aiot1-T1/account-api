@@ -43,7 +43,7 @@ public class GlobalExceptionHandler{
   /**
    * 인증을 위한 AccountAuth 정보를 조회할 때 id가 AccountAuth에 존재하지 않을 경우 발생하는 에러를 처리하는 메서드 입니다.
    * ex) Account테이블에 존재하지 않는 id, OAuth 계정의 pk id로 조회 시도
-   * @param e -유효하지 않은 로그인 id를 메시지로 보냅니다
+   * @param e - 유효하지 않은 로그인 id를 메시지로 보냅니다
    * @return
    * @param <T>
    */
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler{
 
   /**
    * 이미 존재하는 id로 Account를 등록하려고 할때 발생하는 에러에 대한 처리 메서드 입니다
-   * @param e 이미 존재하는 id를 메시지로 보냅니다
+   * @param e - 이미 존재하는 id를 메시지로 보냅니다
    * @return  error에 대한 내용을 응답으로 보냅니다
    */
   @ExceptionHandler(AccountAlreadyExistException.class)
