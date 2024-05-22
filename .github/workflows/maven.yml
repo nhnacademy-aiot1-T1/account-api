@@ -42,7 +42,7 @@ jobs:
       with:
         files: ./src/main/resources/application-prod.yml
       env:
-        eureka.client.service-url.defaultZone: ${{ secrets.MYSQL_URL }}
+        eureka.client.service-url.defaultZone: ${{ secrets.EUREKA_URL }}
         
     - name: Build with Maven
       run: mvn -X -B package
