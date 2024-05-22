@@ -36,7 +36,14 @@ jobs:
         spring.datasource.url: ${{ secrets.MYSQL_URL }}
         spring.datasource.username: ${{ secrets.MYSQL_USERNAME }}
         spring.datasource.password: ${{ secrets.MYSQL_PASSWORD }}
-    
+
+    - name: Set eureka url
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: ./src/main/resources/application-prod.yml
+      env:
+        eureka.client.service-url.defaultZone: ${{ secrets.MYSQL_URL }}
+        
     - name: Build with Maven
       run: mvn -X -B package
    
