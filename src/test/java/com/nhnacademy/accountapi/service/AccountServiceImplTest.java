@@ -14,6 +14,7 @@ import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
 import com.nhnacademy.accountapi.entity.enumfield.AuthType;
 import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
 import com.nhnacademy.accountapi.exception.AccountAuthNotFoundException;
+import com.nhnacademy.accountapi.exception.AccountDeactivatedException;
 import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import com.nhnacademy.accountapi.repository.AccountAuthRepository;
 import com.nhnacademy.accountapi.repository.AccountRepository;
@@ -87,6 +88,8 @@ class AccountServiceImplTest {
   void getAccountAuthSuccess() {
     Mockito.when(accountAuthRepository.findByLoginId(auth.getLoginId()))
         .thenReturn(Optional.ofNullable(auth));
+    Mockito.when(accountRepository.findById(account.getId()))
+        .thenReturn(Optional.ofNullable(account));
 
     AccountCredentialsResponse result = accountService.getAccountAuth(auth.getLoginId());
 
@@ -97,8 +100,8 @@ class AccountServiceImplTest {
   }
 
   @Test
-  @DisplayName("계정 인증정보 조회 실패")
-  void getAccountAuthFail() {
+  @DisplayName("존재하지 않는 계정 인증정보 조회시 AccountAuthNotFoundException 이 발생한다")
+  void getAccountAuthFailNotFound() {
     String failId = "failId";
     Mockito.when(accountAuthRepository.findByLoginId(auth.getLoginId()))
         .thenReturn(Optional.empty());
@@ -106,6 +109,21 @@ class AccountServiceImplTest {
     assertThatExceptionOfType(AccountAuthNotFoundException.class)
         .isThrownBy(() -> accountService.getAccountAuth(failId))
         .withMessage("유효하지 않은 id 입니다(Login ID NOT FOUND) : " + failId);
+  }
+
+  @Test
+  @DisplayName("비활성화 계정 인증정보 조회시 AccountDeactivatedException 이 발생한다")
+  void getAccountAuthFailForbidden() {
+    account.changeStatus(AccountStatus.DEACTIVATED);
+    Mockito.when(accountAuthRepository.findByLoginId(auth.getLoginId()))
+        .thenReturn(Optional.ofNullable(auth));
+    Mockito.when(accountRepository.findById(account.getId()))
+        .thenReturn(Optional.ofNullable(account));
+
+    assertThatExceptionOfType(AccountDeactivatedException.class)
+        .isThrownBy(() -> accountService.getAccountAuth(auth.getLoginId()))
+        .withMessage("유효하지 않은 id 입니다 (DEACTIVATED) : " + auth.getLoginId());
+    account.changeStatus(AccountStatus.ACTIVE);
   }
 
   @Test
@@ -126,8 +144,8 @@ class AccountServiceImplTest {
   }
 
   @Test
-  @DisplayName("기본 계정정보 조회 실패")
-  void getAccountInfoFail() {
+  @DisplayName("존재하지 않는 기본 계정정보 조회시 AccountNotFoundException 발생")
+  void getAccountInfoFailNotFound() {
     Long failId = 404L;
     Mockito.when(accountRepository.findById(account.getId())).thenReturn(Optional.empty());
 
@@ -200,7 +218,7 @@ class AccountServiceImplTest {
 
     assertThatExceptionOfType(AccountNotFoundException.class)
         .isThrownBy(() -> accountService.updateAccount(account.getId(), request))
-        .withMessage("존재하지 않는 id 입니다 (PK ID NOT FOUND) : "+ account.getId());
+        .withMessage("존재하지 않는 id 입니다 (PK ID NOT FOUND) : " + account.getId());
   }
 
   @Test
@@ -221,7 +239,7 @@ class AccountServiceImplTest {
 
     assertThatExceptionOfType(AccountNotFoundException.class)
         .isThrownBy(() -> accountService.updateAccountPassword(account.getId(), password))
-        .withMessage("존재하지 않는 id 입니다 (PK ID NOT FOUND) : "+ account.getId());
+        .withMessage("존재하지 않는 id 입니다 (PK ID NOT FOUND) : " + account.getId());
   }
 
   @Test
@@ -233,12 +251,12 @@ class AccountServiceImplTest {
   }
 
   @Test
-  @DisplayName("계정 상태 DEACTIVATED로 변경 실패")
+  @DisplayName("존재하지 않는 계정 상태를 비활성화 하려고 할때 AccountNotFoundException 발생")
   void deleteAccountFail() {
     Mockito.when(accountRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThatExceptionOfType(AccountNotFoundException.class)
         .isThrownBy(() -> accountService.deleteAccount(account.getId()))
-        .withMessage("존재하지 않는 id 입니다 (PK ID NOT FOUND) : "+ account.getId());
+        .withMessage("존재하지 않는 id 입니다 (PK ID NOT FOUND) : " + account.getId());
   }
 }

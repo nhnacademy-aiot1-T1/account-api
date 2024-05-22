@@ -1,6 +1,7 @@
 package com.nhnacademy.accountapi.service;
 
 import com.nhnacademy.accountapi.exception.AccountAuthNotFoundException;
+import com.nhnacademy.accountapi.exception.AccountDeactivatedException;
 import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
 import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
 import com.nhnacademy.accountapi.entity.Account;
@@ -53,6 +54,12 @@ public class AccountServiceImpl implements AccountService {
   public AccountCredentialsResponse getAccountAuth(String loginId) {
     AccountAuth accountAuth = accountAuthRepository.findByLoginId(loginId)
         .orElseThrow(() -> new AccountAuthNotFoundException(loginId));
+
+    Account account = accountRepository.findById(accountAuth.getId()).orElseThrow(()-> new AccountNotFoundException(accountAuth.getId()));
+    if (account.getStatus().equals(AccountStatus.DEACTIVATED)) {
+      throw new AccountDeactivatedException(loginId);
+    }
+
     return AccountCredentialsResponse.fromAccountAuth(accountAuth);
   }
 

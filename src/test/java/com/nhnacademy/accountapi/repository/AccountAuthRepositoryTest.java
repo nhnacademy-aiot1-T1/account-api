@@ -54,8 +54,6 @@ class AccountAuthRepositoryTest {
     Optional<AccountAuth> result = accountAuthRepository.findByLoginId("loginId");
 
     assertThat(result).isPresent();
-    assertThat(result.get().getId()).isEqualTo(accountAuth.getId());
-    assertThat(result.get().getLoginId()).isEqualTo(accountAuth.getLoginId());
-    assertThat(result.get().getPassword()).isEqualTo(accountAuth.getPassword());
+    assertThat(result.get()).usingRecursiveComparison().isEqualTo(accountAuth);
   }
 }

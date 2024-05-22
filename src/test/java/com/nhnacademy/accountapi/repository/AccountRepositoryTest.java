@@ -8,6 +8,7 @@ import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
 import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
 import com.nhnacademy.accountapi.entity.enumfield.AuthType;
 import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,14 +56,9 @@ class AccountRepositoryTest {
     entityManager.flush();
 
     Optional<Account> result = accountRepository.findByOauthId(oAuth.getOauthId());
+
     assertThat(result).isPresent();
-    assertThat(result.get().getId()).isEqualTo(account.getId());
-    assertThat(result.get().getName()).isEqualTo(account.getName());
-    assertThat(result.get().getPhone()).isEqualTo(account.getPhone());
-    assertThat(result.get().getEmail()).isEqualTo(account.getEmail());
-    assertThat(result.get().getAuthType()).isEqualTo(account.getAuthType());
-    assertThat(result.get().getStatus()).isEqualTo(account.getStatus());
-    assertThat(result.get().getRole()).isEqualTo(account.getRole());
+    Assertions.assertThat(result.get()).usingRecursiveComparison().isEqualTo(account);
 
   }
 }
