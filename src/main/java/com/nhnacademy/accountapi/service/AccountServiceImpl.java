@@ -39,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
   @Override
   @Transactional(readOnly = true)
   public List<AccountInfoResponse> getAccountList() {
-    return accountRepository.findAll().stream().map(AccountInfoResponse::fromAccount)
+    return accountRepository.findAll().stream().filter(account -> account.getStatus().equals(AccountStatus.ACTIVE)).map(AccountInfoResponse::fromAccount)
         .collect(Collectors.toList());
   }
 
