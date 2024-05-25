@@ -132,7 +132,7 @@ class AccountControllerTest {
   @DisplayName("계정 등록 성공")
   void registerUserSuccess() throws Exception {
     Map<String, String> req = new HashMap<>();
-    req.put("userId", auth.getLoginId());
+    req.put("loginId", auth.getLoginId());
     req.put("password", auth.getPassword());
     req.put("name", account.getName());
     req.put("email", account.getEmail());

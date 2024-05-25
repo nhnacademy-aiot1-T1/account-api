@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @AllArgsConstructor
 public class AccountRegisterRequest {
   @NotBlank
-  private String userId;
+  private String loginId;
   @NotBlank
   private String password;
   @NotBlank
@@ -27,7 +27,7 @@ public class AccountRegisterRequest {
   public AccountAuth toAccountAuth(Long id, PasswordEncoder passwordEncoder) {
     return AccountAuth.builder()
         .id(id)
-        .loginId(userId)
+        .loginId(loginId)
         .password(passwordEncoder.encode(password))
         .build();
   }

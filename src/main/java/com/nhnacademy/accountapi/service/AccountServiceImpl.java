@@ -82,8 +82,8 @@ public class AccountServiceImpl implements AccountService {
    */
   @Override
   public void registerAccount(AccountRegisterRequest accountRegisterRequest) {
-    if (accountAuthRepository.existsByLoginId(accountRegisterRequest.getUserId())) {
-      throw new AccountAlreadyExistException(accountRegisterRequest.getUserId());
+    if (accountAuthRepository.existsByLoginId(accountRegisterRequest.getLoginId())) {
+      throw new AccountAlreadyExistException(accountRegisterRequest.getLoginId());
     }
     Account account = accountRegisterRequest.toAccount();
     account = accountRepository.save(account);

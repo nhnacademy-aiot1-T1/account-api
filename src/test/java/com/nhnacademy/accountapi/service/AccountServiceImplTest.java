@@ -181,11 +181,11 @@ class AccountServiceImplTest {
         account.getName(),
         account.getEmail()
     );
-    Mockito.when(accountAuthRepository.existsByLoginId(request.getUserId())).thenReturn(true);
+    Mockito.when(accountAuthRepository.existsByLoginId(request.getLoginId())).thenReturn(true);
 
     assertThatExceptionOfType(AccountAlreadyExistException.class)
         .isThrownBy(() -> accountService.registerAccount(request))
-        .withMessage(String.format("[%s] already exist", request.getUserId()));
+        .withMessage(String.format("[%s] already exist", request.getLoginId()));
   }
 
   @Test
