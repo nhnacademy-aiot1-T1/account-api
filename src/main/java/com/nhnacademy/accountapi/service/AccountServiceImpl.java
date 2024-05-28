@@ -1,6 +1,7 @@
 package com.nhnacademy.accountapi.service;
 
-import com.nhnacademy.accountapi.exception.CommonAccountAuthNotFoundException;
+import com.nhnacademy.accountapi.exception.AccountAuthNotFoundException;
+import com.nhnacademy.accountapi.exception.AccountDeactivatedException;
 import com.nhnacademy.accountapi.service.dto.AccountCredentialsResponse;
 import com.nhnacademy.accountapi.service.dto.AccountInfoResponse;
 import com.nhnacademy.accountapi.entity.Account;
@@ -8,8 +9,8 @@ import com.nhnacademy.accountapi.entity.AccountAuth;
 import com.nhnacademy.accountapi.controller.dto.AccountModifyRequest;
 import com.nhnacademy.accountapi.controller.dto.AccountRegisterRequest;
 import com.nhnacademy.accountapi.entity.enumfield.AccountStatus;
-import com.nhnacademy.accountapi.exception.CommonAccountAlreadyExistException;
-import com.nhnacademy.accountapi.exception.CommonAccountNotFoundException;
+import com.nhnacademy.accountapi.exception.AccountAlreadyExistException;
+import com.nhnacademy.accountapi.exception.AccountNotFoundException;
 import com.nhnacademy.accountapi.repository.AccountAuthRepository;
 import com.nhnacademy.accountapi.repository.AccountRepository;
 import java.util.List;
@@ -38,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
   @Override
   @Transactional(readOnly = true)
   public List<AccountInfoResponse> getAccountList() {
-    return accountRepository.findAll().stream().map(AccountInfoResponse::fromAccount)
+    return accountRepository.findAll().stream().filter(account -> account.getStatus().equals(AccountStatus.ACTIVE)).map(AccountInfoResponse::fromAccount)
         .collect(Collectors.toList());
   }
 
@@ -52,7 +53,13 @@ public class AccountServiceImpl implements AccountService {
   @Transactional(readOnly = true)
   public AccountCredentialsResponse getAccountAuth(String loginId) {
     AccountAuth accountAuth = accountAuthRepository.findByLoginId(loginId)
-        .orElseThrow(() -> new CommonAccountAuthNotFoundException(loginId));
+        .orElseThrow(() -> new AccountAuthNotFoundException(loginId));
+
+    Account account = accountRepository.findById(accountAuth.getId()).orElseThrow(()-> new AccountNotFoundException(accountAuth.getId()));
+    if (account.getStatus().equals(AccountStatus.DEACTIVATED)) {
+      throw new AccountDeactivatedException(loginId);
+    }
+
     return AccountCredentialsResponse.fromAccountAuth(accountAuth);
   }
 
@@ -65,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
   @Transactional(readOnly = true)
   public AccountInfoResponse getAccountInfo(Long id) {
     Account account = accountRepository.findById(id)
-        .orElseThrow(() -> new CommonAccountNotFoundException(id));
+        .orElseThrow(() -> new AccountNotFoundException(id));
     return AccountInfoResponse.fromAccount(account);
   }
 
@@ -75,8 +82,8 @@ public class AccountServiceImpl implements AccountService {
    */
   @Override
   public void registerAccount(AccountRegisterRequest accountRegisterRequest) {
-    if (accountAuthRepository.existsByLoginId(accountRegisterRequest.getUserId())) {
-      throw new CommonAccountAlreadyExistException(accountRegisterRequest.getUserId());
+    if (accountAuthRepository.existsByLoginId(accountRegisterRequest.getLoginId())) {
+      throw new AccountAlreadyExistException(accountRegisterRequest.getLoginId());
     }
     Account account = accountRegisterRequest.toAccount();
     account = accountRepository.save(account);
@@ -95,7 +102,7 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public void updateAccount(Long id, AccountModifyRequest request) {
     Account target = accountRepository.findById(id)
-        .orElseThrow(() -> new CommonAccountNotFoundException(id));
+        .orElseThrow(() -> new AccountNotFoundException(id));
 
     target.updateInfo(request);
   }
@@ -109,7 +116,7 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public void updateAccountPassword(Long id, String password) {
     AccountAuth target = accountAuthRepository.findById(id)
-        .orElseThrow(() -> new CommonAccountNotFoundException(id));
+        .orElseThrow(() -> new AccountNotFoundException(id));
     target.changePassword(passwordEncoder.encode(password));
   }
 
@@ -120,7 +127,7 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public void deleteAccount(Long id) {
     Account account = accountRepository.findById(id)
-        .orElseThrow(() -> new CommonAccountNotFoundException(id));
+        .orElseThrow(() -> new AccountNotFoundException(id));
     account.changeStatus(AccountStatus.DEACTIVATED);
   }
 

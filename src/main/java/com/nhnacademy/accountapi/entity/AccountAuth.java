@@ -4,10 +4,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 홈페이지에서 직접가입한 계정의 로그인 정보를 관리하는 Entity입니다
@@ -15,8 +15,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "account_auth")
 @Getter
-@NoArgsConstructor
-@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AccountAuth {
   @Id
   private Long id;

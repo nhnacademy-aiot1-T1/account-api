@@ -3,10 +3,8 @@ package com.nhnacademy.accountapi.controller.dto;
 import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.entity.enumfield.AuthType;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public class OAuthRegisterRequest {
   private final String oauthId;
   private final String oauthType;

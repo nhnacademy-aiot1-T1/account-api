@@ -4,13 +4,11 @@ import com.nhnacademy.accountapi.entity.Account;
 import com.nhnacademy.accountapi.entity.enumfield.AccountRole;
 import com.nhnacademy.accountapi.entity.enumfield.AuthType;
 import lombok.Getter;
-import lombok.ToString;
 
 /**
  * 가입 타입과 상관없이 계정의 pk id로 계정정보를 조회했을때 응답으로 전달되는 DTO 입니다
  */
 @Getter
-@ToString
 public class AccountInfoResponse {
 
   private final Long id;

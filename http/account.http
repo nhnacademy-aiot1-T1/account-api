@@ -3,7 +3,7 @@ POST http://localhost:8080/api/account/users
 Content-Type: application/json
 
 {
-  "userId": "qaw",
+  "loginId": "qaw1",
   "password": "1234",
   "name": "미정",
   "email": "mj@account"
@@ -13,7 +13,7 @@ POST http://localhost:8080/api/account/users
 Content-Type: application/json
 
 {
-  "userId": "admin",
+  "loginId": "admin1",
   "password": "1234",
   "name": "admin",
   "email": "admin@admi"
@@ -23,7 +23,7 @@ POST http://localhost:8080/api/account/oauth/users
 Content-Type: application/json
 
 {
-  "oauthId": "oauthtest1",
+  "oauthId": "oauthtest10",
   "oauthType": "payco",
   "name": "opc",
   "email": "email@sdas"
