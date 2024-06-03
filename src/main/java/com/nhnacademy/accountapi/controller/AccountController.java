@@ -11,6 +11,7 @@ import com.nhnacademy.common.dto.CommonResponse;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * User 정보와 관련하여 기능을 제공하는 Controller
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/account/users")
 @RequiredArgsConstructor
@@ -76,6 +78,7 @@ public class AccountController {
   @ResponseStatus(HttpStatus.CREATED)
   public <T> CommonResponse<T> registerUser(
       @Valid @RequestBody AccountRegisterRequest user) {
+    log.info("Registering user: {}", user);
     accountService.registerAccount(user);
     return CommonResponse.success(null, "회원 등록이 정상적으로 처리되었습니다 : " + user.getName());
   }
@@ -91,6 +94,7 @@ public class AccountController {
   @ResponseStatus(HttpStatus.OK)
   public <T> CommonResponse<T> modifyAccountInfo(@PathVariable Long id,
       @RequestBody AccountModifyRequest account) {
+    log.info("Modifying account info: {}", account);
     accountService.updateAccount(id, account);
 
     return CommonResponse.success(null, "계정 정보가 수정되었습니다 : " + id);
