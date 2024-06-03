@@ -38,4 +38,9 @@ public class GlobalExceptionHandler {
     return CommonResponse.fail(builder.toString());
   }
 
+  @ExceptionHandler(Exception.class)
+  public <T> CommonResponse<T> handleException(Exception e, HttpServletResponse response) {
+    return CommonResponse.fail(e.getMessage());
+  }
+
 }
