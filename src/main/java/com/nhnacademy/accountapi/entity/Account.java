@@ -72,7 +72,7 @@ public class Account {
     if (request.getStatus() != null) {
       this.status = request.getStatus();
     }
-    if (request.getStatus() != null) {
+    if (request.getRole() != null) {
       this.role = request.getRole();
     }
   }
