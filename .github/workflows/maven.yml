@@ -75,5 +75,5 @@ jobs:
           docker pull "${{ secrets.DOCKER_USERNAME }}"/account
           docker stop account || true
           docker rm account || true 
-          docker run -d --name account "${{ secrets.DOCKER_USERNAME }}"/account
+          docker run -d --network t1bridge --name account "${{ secrets.DOCKER_USERNAME }}"/account
 
